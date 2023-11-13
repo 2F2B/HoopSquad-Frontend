@@ -1,16 +1,10 @@
-import { View, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
+import { UserProvider } from "./contexts/UserContext";
+import Navigation from "./navigations/Navigation";
 
-const App = () => {
+export default function App() {
   return (
-    <View>
-      <SafeAreaView>
-        <Text>App입니다...</Text>
-        <StatusBar style="auto" />
-      </SafeAreaView>
-    </View>
+    <UserProvider>
+      <Navigation />
+    </UserProvider>
   );
-};
-
-export default App;
+}
