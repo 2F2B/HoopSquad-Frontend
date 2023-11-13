@@ -1,6 +1,7 @@
 import { createContext, useState } from "react";
-import PropTypes from "prop-types";
 import axios from "axios";
+import PropTypes from "prop-types";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Usercontext = createContext();
 
@@ -18,8 +19,13 @@ const UserContext = ({ children }) => {
     }
   };
 
+  const logout = () => {
+    setUser("");
+    AsyncStorage.clear();
+  };
+
   return (
-    <Usercontext.Provider value={{ user, setUser, getUserInfo }}>
+    <Usercontext.Provider value={{ user, setUser, getUserInfo, logout }}>
       {children}
     </Usercontext.Provider>
   );

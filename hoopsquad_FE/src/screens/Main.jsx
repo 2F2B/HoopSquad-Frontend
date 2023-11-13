@@ -1,11 +1,16 @@
-import { View, Text } from "react-native";
+import { Text, View, Button } from "react-native";
+import { useContext } from "react";
+import Usercontext from "./UserStore";
 
-const Mainscreen = () => {
+const Main = () => {
+  const { user, logout } = useContext(Usercontext);
+
   return (
     <View>
-      <Text>메인페이지</Text>
+      <Text>{user}</Text>
+      <Button title="로그아웃" onPress={() => logout()} />
     </View>
   );
 };
 
-export default Mainscreen;
+export default Main;
