@@ -7,6 +7,7 @@ import Login from "../screens/Login";
 import Main from "../screens/Main";
 import KakaoLogin from "../screens/KakaoLogin";
 import Usercontext from "../contexts/UserContext";
+import { REACT_APP_PROXY } from "@env";
 
 const Navigation = () => {
   const { user, getUserInfo } = useContext(Usercontext);
@@ -26,12 +27,9 @@ const Navigation = () => {
 
   const checkValidation = async (token) => {
     try {
-      const response = await axios.post(
-        "https://hoopsquad.link/auth/validation",
-        {
-          access_token: token,
-        }
-      );
+      const response = await axios.post(`${REACT_APP_PROXY}auth/validation`, {
+        access_token: token,
+      });
 
       if (response.status == 201) {
         AsyncStorage.setItem("accessToken", response.headers["access-token"]);
