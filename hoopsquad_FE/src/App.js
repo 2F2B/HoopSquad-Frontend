@@ -1,12 +1,10 @@
-import { UserContext } from "./UserContext";
-import Navigation from "./Navigation";
+import { UserProvider } from "./contexts/UserContext";
+import Navigation from "./navigations/Navigation";
 
-function App() {
+export default function App() {
   return (
-    <UserContext>
+    <UserProvider>
       <Navigation />
-    </UserContext>
+    </UserProvider>
   );
 }
-
-export default App;

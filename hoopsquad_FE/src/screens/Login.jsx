@@ -9,7 +9,7 @@ const Login = () => {
       <Text>로그인 화면</Text>
       <Button
         title="카카오 로그인"
-        onPress={() => navigation.navigate("Kakaologin")}
+        onPress={() => navigation.navigate("KakaoLogin")}
       />
     </View>
   );

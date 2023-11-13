@@ -3,13 +3,13 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-import Login from "./login";
-import Main from "./main";
-import KakaoLogin from "./kakaologin";
-import UserContext from "./UserContext";
+import Login from "../screens/Login";
+import Main from "../screens/Main";
+import KakaoLogin from "../screens/KakaoLogin";
+import Usercontext from "../contexts/UserContext";
 
 const Navigation = () => {
-  const { user, getUserInfo } = useContext(UserContext);
+  const { user, getUserInfo } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {
@@ -45,7 +45,7 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Home">{user ? <Main /> : <Login />}</Stack.Screen>
+        <Stack.Screen name="Main" component={user ? Main : Login} />
         <Stack.Screen name="KakaoLogin" component={KakaoLogin} />
       </Stack.Navigator>
     </NavigationContainer>

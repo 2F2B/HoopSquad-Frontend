@@ -1,6 +1,6 @@
 import { Text, View, Button } from "react-native";
 import { useContext } from "react";
-import Usercontext from "./UserStore";
+import Usercontext from "../contexts/UserContext";
 
 const Main = () => {
   const { user, logout } = useContext(Usercontext);

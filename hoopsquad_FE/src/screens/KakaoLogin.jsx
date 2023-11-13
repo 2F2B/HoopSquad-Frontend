@@ -3,7 +3,8 @@ import axios from "axios";
 import { WebView } from "react-native-webview";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import Usercontext from "./UserStore";
+import Usercontext from "../contexts/UserContext";
+import { REACT_APP_CLIENTID, REACT_APP_REDIRECT_URL } from "@env";
 
 const Kakaologin = () => {
   const navigation = useNavigation();
@@ -22,7 +23,7 @@ const Kakaologin = () => {
   const requestToken = async () => {
     try {
       const response = await axios.get(
-        `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${preocess.env.REACT_APP_CLIENTID}&redirect_uri=${preocess.env.REACT_APP_REDIRECT_URL}`
+        `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${REACT_APP_CLIENTID}&redirect_uri=${REACT_APP_REDIRECT_URL}`
       );
       await AsyncStorage.setItem(
         "accessToken",
@@ -40,7 +41,7 @@ const Kakaologin = () => {
     <WebView
       style={{ flex: 1, width: "100%" }}
       source={{
-        uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${preocess.env.REACT_APP_CLIENTID}&redirect_uri=${preocess.env.REACT_APP_REDIRECT_URL}`,
+        uri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${process.env.REACT_APP_CLIENTID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URL}`,
       }}
       injectedJavaScript={INJECTED_JAVASCRIPT}
       javaScriptEnabled

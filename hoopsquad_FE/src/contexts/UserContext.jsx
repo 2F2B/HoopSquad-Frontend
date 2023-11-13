@@ -1,11 +1,10 @@
 import { createContext, useState } from "react";
 import axios from "axios";
-import PropTypes from "prop-types";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Usercontext = createContext();
 
-const UserContext = ({ children }) => {
+export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   const getUserInfo = async (userId) => {
@@ -31,8 +30,4 @@ const UserContext = ({ children }) => {
   );
 };
 
-UserStore.propTypes = {
-  children: PropTypes.node,
-};
-
-export default UserContext;
+export default Usercontext;
