@@ -7,13 +7,12 @@ const Usercontext = createContext();
 const UserContext = ({ children }) => {
   const [user, setUser] = useState(null);
 
-  const getUserInfo = async () => {
+  const getUserInfo = async (userId) => {
     try {
       const response = await axios.get(
-        `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${process.env.REACT_APP_CLIENTID}&redirect_uri=${process.env.REACT_APP_REDIRECT_URL}`,
-        {}
+        `https://hoopsquad.link/profile/user/${userId}`
       );
-      setUser(response.data.Profile.Name);
+      setUser(response.data.Name);
     } catch (error) {
       console.error(error);
     }
