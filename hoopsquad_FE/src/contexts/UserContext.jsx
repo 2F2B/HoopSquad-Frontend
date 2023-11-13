@@ -1,7 +1,7 @@
 import { createContext, useState } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import { REACT_APP_PROXY } from "@env";
 const Usercontext = createContext();
 
 export const UserProvider = ({ children }) => {
@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
   const getUserInfo = async (userId) => {
     try {
       const response = await axios.get(
-        `https://hoopsquad.link/profile/user/${userId}`
+        `${REACT_APP_PROXY}profile/user/${userId}`
       );
       setUser(response.data.Name);
     } catch (error) {
