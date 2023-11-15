@@ -187,7 +187,7 @@ const Matching = () => {
               </View>
             </ScrollView>
 
-            <View style={{ position: "absolute", bottom: 0, right: 5 }}>
+            <View style={{ position: "absolute", bottom: 25, right: 5 }}>
               <TouchableOpacity
                 onPress={() => navigation.navigate("MatchRegister")}
               >
@@ -227,7 +227,9 @@ const Matching = () => {
             </TouchableOpacity>
 
             <View>
-              <Text style={{ fontSize: 16, marginTop: 60, fontWeight: 'bold' }}>게임 유형</Text>
+              <Text style={{ fontSize: 16, marginTop: 60, fontWeight: "bold" }}>
+                게임 유형
+              </Text>
               <View
                 style={{
                   flexDirection: "row",
@@ -284,7 +286,9 @@ const Matching = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text style={{ fontSize: 16, marginTop: 30, fontWeight: 'bold' }}>지역</Text>
+              <Text style={{ fontSize: 16, marginTop: 30, fontWeight: "bold" }}>
+                지역
+              </Text>
               <View
                 style={{
                   flexDirection: "row",
