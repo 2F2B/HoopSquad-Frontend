@@ -7,46 +7,14 @@ import {
   TouchableOpacity,
   StyleSheet,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { REACT_APP_PROXY } from "@env";
-import axios from "axios";
 
-const Login = () => {
+const Signup = () => {
 
-  const navigation = useNavigation();
   const [formFields, setformFields] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
-
-  const handleChange = (fieldName, value) => {
-    setformFields({
-      ...formFields,
-      [fieldName]: value,
-    });
-  };
-
-  const submitLoginForm = async () =>{
-
-    const { email, password } = formFields;
-    try {
-      const res = await axios.post(`${REACT_APP_PROXY}auth/login`, {
-        Email : email,
-        Password : password,
-      });
-      alert('로그인 성공! 😀');
-      console.log(res);
-      AsyncStorage.setItem('accessToken', res.data.token);
-      navigation.navigate('Main');
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const handleLogin = () => {
-    submitLoginForm();
-  }
 
   return (
     <View style={styles.container}>
@@ -61,31 +29,25 @@ const Login = () => {
         style={styles.inputStyle}
         placeholder="이메일"
         value={formFields.email}
-        onChangeText={(text) => handleChange("email", text)}
       />
       <TextInput
         style={styles.inputStyle}
         placeholder="비밀번호"
         value={formFields.password}
-        onChangeText={(text) => handleChange("password", text)}
         secureTextEntry={true}
       />
-      <TouchableOpacity 
-        style={styles.buttonStyle}
-        onPress={() => handleLogin()}
-      >
+      <TextInput
+        style={styles.inputStyle}
+        placeholder="비밀번호 확인"
+        value={formFields.confirmPassword}
+        secureTextEntry={true}
+      />
+      <TouchableOpacity style={styles.buttonStyle}>
         <Text style={styles.buttonText}>시작하기</Text>
       </TouchableOpacity>
-      <View style={styles.optionContainer}>
-        <Text style={styles.optionText}>아이디 찾기</Text>
-        <Text style={styles.optionMiddle}>비밀번호 재설정</Text>
-        <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-          <Text style={styles.optionText}>회원가입</Text>
-        </TouchableOpacity>
-      </View>
       <View style={styles.oauthContainer}>
         <View style={styles.line} />
-        <Text style={styles.oauthText}>간편 로그인</Text>
+        <Text style={styles.oauthText}>간편 회원가입</Text>
         <View style={styles.line} />
       </View>
       <View style={styles.oauthImgContainer}>
@@ -183,28 +145,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  optionContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width : 230,
-    height : 20,
-    marginTop: 20,
-  },
-  optionText: {
-    color: "#CDCDCD",
-    fontSize: 10,
-    fontWeight: "bold",
-  },
-  optionMiddle: {
-    color: "#CDCDCD",
-    fontSize: 10,
-    fontWeight: "bold",
-    borderColor: '#CDCDCD',
-    borderRightWidth : 1,
-    borderLeftWidth: 1,
-    paddingHorizontal : 15,
-  }
 });
 
-export default Login;
+export default Signup;

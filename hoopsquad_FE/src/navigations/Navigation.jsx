@@ -5,6 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Login from "../screens/Login";
 import Main from "../screens/Main";
+import Signup from '../screens/Signup/Signup';
 import KakaoLogin from "../screens/KakaoLogin";
 import Usercontext from "../contexts/UserContext";
 import { REACT_APP_PROXY } from "@env";
@@ -54,11 +55,14 @@ const Navigation = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="KakaoLogin" component={KakaoLogin} />
+
         <Stack.Screen
           name="MatchRegister"
           component={MatchRegister}
           options={{ headerShown: false }}
         />
+
+        <Stack.Screen name="Signup" component={Signup} />
       </Stack.Navigator>
     </NavigationContainer>
   );
