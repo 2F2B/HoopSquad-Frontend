@@ -173,17 +173,27 @@ const Matching = () => {
           <View style={{ height: "70%" }}>
             <ScrollView>
               <View>
-                {matchData?.map((data, index) => (
-                  <Match
-                    key={index}
-                    Title={data.Title}
-                    gameType={data.GameType}
-                    currentAmount={data.CurrentAmount}
-                    recruitAmount={data.RecruitAmount}
-                    Location={data.Location}
-                    writeDate={data.WriteDate}
-                  />
-                ))}
+                {matchData?.map((data, index) => {
+                  const postingId = data.Posting_id;
+
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        navigation.navigate("MatchDetail", { postingId })
+                      }
+                    >
+                      <Match
+                        Title={data.Title}
+                        gameType={data.GameType}
+                        currentAmount={data.CurrentAmount}
+                        recruitAmount={data.RecruitAmount}
+                        Location={data.Location}
+                        writeDate={data.WriteDate}
+                      />
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </ScrollView>
 
@@ -227,7 +237,9 @@ const Matching = () => {
             </TouchableOpacity>
 
             <View>
-              <Text style={{ fontSize: 16, marginTop: 60, fontWeight: 'bold' }}>게임 유형</Text>
+              <Text style={{ fontSize: 16, marginTop: 60, fontWeight: "bold" }}>
+                게임 유형
+              </Text>
               <View
                 style={{
                   flexDirection: "row",
@@ -284,7 +296,9 @@ const Matching = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text style={{ fontSize: 16, marginTop: 30, fontWeight: 'bold' }}>지역</Text>
+              <Text style={{ fontSize: 16, marginTop: 30, fontWeight: "bold" }}>
+                지역
+              </Text>
               <View
                 style={{
                   flexDirection: "row",
