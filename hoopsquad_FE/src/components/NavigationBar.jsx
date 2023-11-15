@@ -2,9 +2,7 @@ import {
   Text,
   View,
   StyleSheet,
-  TextInput,
   TouchableOpacity,
-  ScrollView,
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
@@ -23,9 +21,10 @@ const NavigationBar = () => {
         justifyContent: "space-between",
         position: "absolute",
         bottom: 0,
-        borderWidth: 1,
-        width: "100%",
-        height: "10%",
+        borderTopWidth: 1,
+        backgroundColor: "#ffffff",
+        borderColor : "#E2E2E2",
+        height: 65,
       }}
     >
       <TouchableOpacity

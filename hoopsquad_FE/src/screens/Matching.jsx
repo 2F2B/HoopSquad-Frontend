@@ -86,12 +86,12 @@ const Matching = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior="height"
-      keyboardVerticalOffset={-50}
+      keyboardVerticalOffset={-60}
     >
       <SafeAreaView
         style={[
           { flex: 1 },
-          filter && { backgroundColor: "rgba(0, 0, 0, 0.8)" },
+          filter && { backgroundColor: "rgba(0, 0, 0, 0.15)" },
         ]}
       >
         <StatusBar style="dark" />
@@ -170,7 +170,7 @@ const Matching = () => {
               />
             </TouchableOpacity>
           </View>
-          <View style={{ height: "65%" }}>
+          <View style={{ height: "70%" }}>
             <ScrollView>
               <View>
                 {matchData?.map((data, index) => (
@@ -202,12 +202,12 @@ const Matching = () => {
           <View
             style={{
               zIndex: 1,
-              padding: 10,
+              padding: 20,
               position: "absolute",
-              top: 100,
+              bottom: 0,
               backgroundColor: "white",
               width: "100%",
-              height: "90%",
+              height: "75%",
             }}
           >
             <TouchableOpacity
@@ -227,11 +227,11 @@ const Matching = () => {
             </TouchableOpacity>
 
             <View>
-              <Text style={{ fontSize: 16, marginTop: 60 }}>게임 유형</Text>
+              <Text style={{ fontSize: 16, marginTop: 60, fontWeight: 'bold' }}>게임 유형</Text>
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
+                  justifyContent: "space-around",
                 }}
               >
                 <TouchableOpacity
@@ -284,11 +284,11 @@ const Matching = () => {
                 </TouchableOpacity>
               </View>
 
-              <Text style={{ fontSize: 16, marginTop: 30 }}>지역</Text>
+              <Text style={{ fontSize: 16, marginTop: 30, fontWeight: 'bold' }}>지역</Text>
               <View
                 style={{
                   flexDirection: "row",
-                  justifyContent: "space-between",
+                  justifyContent: "space-around",
                 }}
               >
                 <TouchableOpacity
