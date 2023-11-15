@@ -9,6 +9,8 @@ import Signup from '../screens/Signup/Signup';
 import KakaoLogin from "../screens/KakaoLogin";
 import Usercontext from "../contexts/UserContext";
 import { REACT_APP_PROXY } from "@env";
+import Matching from "../screens/Matching";
+import MatchRegister from "../screens/MatchRegister";
 
 const Navigation = () => {
   const { user, getUserInfo } = useContext(Usercontext);
@@ -43,9 +45,23 @@ const Navigation = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator
+        screenOptions={{ contentStyle: { backgroundColor: "white" } }}
+      >
         <Stack.Screen name="Main" component={user ? Main : Login} />
+        <Stack.Screen
+          name="Match"
+          component={Matching}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen name="KakaoLogin" component={KakaoLogin} />
+
+        <Stack.Screen
+          name="MatchRegister"
+          component={MatchRegister}
+          options={{ headerShown: false }}
+        />
+
         <Stack.Screen name="Signup" component={Signup} />
       </Stack.Navigator>
     </NavigationContainer>
