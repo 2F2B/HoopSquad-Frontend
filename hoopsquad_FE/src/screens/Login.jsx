@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Text,
   View,
@@ -9,12 +9,14 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Usercontext from "../contexts/UserContext";
 import { REACT_APP_PROXY } from "@env";
 import axios from "axios";
 
 const Login = () => {
 
   const navigation = useNavigation();
+  const { setUser } = useContext(Usercontext);
   const [formFields, setformFields] = useState({
     email: "",
     password: "",
@@ -35,9 +37,8 @@ const Login = () => {
         Email : email,
         Password : password,
       });
-      alert('로그인 성공! 😀');
-      console.log(res);
       AsyncStorage.setItem('accessToken', res.data.token);
+      setUser(res.data.Name);
       navigation.navigate('Main');
     } catch (error) {
       console.error(error);
@@ -89,7 +90,10 @@ const Login = () => {
         <View style={styles.line} />
       </View>
       <View style={styles.oauthImgContainer}>
-        <TouchableOpacity style={styles.oauthImgWrapper}>
+        <TouchableOpacity 
+          style={styles.oauthImgWrapper}
+          onPress={() => navigation.navigate("KakaoLogin")}
+        >
           <Image
             source={require("../../assets/kakaoLogin.png")}
             style={styles.image}
