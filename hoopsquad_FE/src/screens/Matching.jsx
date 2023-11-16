@@ -173,17 +173,27 @@ const Matching = () => {
           <View style={{ height: "70%" }}>
             <ScrollView>
               <View>
-                {matchData?.map((data, index) => (
-                  <Match
-                    key={index}
-                    Title={data.Title}
-                    gameType={data.GameType}
-                    currentAmount={data.CurrentAmount}
-                    recruitAmount={data.RecruitAmount}
-                    Location={data.Location}
-                    writeDate={data.WriteDate}
-                  />
-                ))}
+                {matchData?.map((data, index) => {
+                  const postingId = data.Posting_id;
+
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        navigation.navigate("MatchDetail", { postingId })
+                      }
+                    >
+                      <Match
+                        Title={data.Title}
+                        gameType={data.GameType}
+                        currentAmount={data.CurrentAmount}
+                        recruitAmount={data.RecruitAmount}
+                        Location={data.Location}
+                        writeDate={data.WriteDate}
+                      />
+                    </TouchableOpacity>
+                  );
+                })}
               </View>
             </ScrollView>
 
