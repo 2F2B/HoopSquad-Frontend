@@ -14,7 +14,7 @@ import { REACT_APP_PROXY } from "@env";
 import { useEffect, useState } from "react";
 import formatDate from "../../utils/formatDate";
 import MatchInfoSection from "./components/MatchInfoSection";
-import GameType from "../../components/GameType";
+import GameType from "../Matching/components/GameType";
 
 const MatchDetail = ({ route }) => {
   const navigation = useNavigation();
@@ -82,8 +82,7 @@ const MatchDetail = ({ route }) => {
             참가 인원 {matchInfo?.CurrentAmount} / {matchInfo?.RecruitAmount}
           </Text>
         </MatchInfoSection>
-        <MatchInfoSection title="매칭 위치">
-        </MatchInfoSection>
+        <MatchInfoSection title="매칭 위치"></MatchInfoSection>
       </ScrollView>
     </SafeAreaView>
   );

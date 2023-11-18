@@ -1,8 +1,8 @@
 import { Text, View, Button, StyleSheet, TextInput, Image } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
-import GameType from "../components/GameType";
-import HoopSquadFullLogo from "../../assets/HoopSquadFullLogo.png";
+import GameType from "./GameType";
+import HoopSquadFullLogo from "../../../../assets/HoopSquadFullLogo.png";
 
 const Match = (props) => {
   const { Title, gameType, currentAmount, recruitAmount, Location, writeDate } =
