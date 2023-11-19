@@ -27,11 +27,11 @@ const MatchDetail = ({ route }) => {
 
   const getMatchDetailInfo = async () => {
     try {
-      const response = await axios.get(`${REACT_APP_PROXY}match/info`, {
-        Posting_id: postingId,
-      });
+      const response = await axios.get(
+        `${REACT_APP_PROXY}match/?info=true&Posting_id=${postingId}`,
+        {}
+      );
       setMatchInfo(response.data.Posting);
-      console.log(response.data.Posting);
     } catch (error) {
       console.error(error);
     }
@@ -63,24 +63,35 @@ const MatchDetail = ({ route }) => {
         />
       </View>
       <View style={styles.titleContainer}>
-        <Text style={styles.titleText}>{matchInfo?.Title}</Text>
-        <Text style={styles.timeText}>
-          {matchInfo && formatDate(matchInfo.WriteDate)}
-        </Text>
+        {matchInfo && matchInfo[0] && (
+          <>
+            <Text style={styles.titleText}>{matchInfo[0].Title}</Text>
+            {matchInfo[0].WriteDate && (
+              <Text style={styles.timeText}>
+                {formatDate(matchInfo[0].WriteDate)}
+              </Text>
+            )}
+          </>
+        )}
       </View>
+
       <ScrollView style={styles.contentContainer}>
         <MatchInfoSection title="매칭 안내">
-          <Text>{matchInfo?.Introduce}</Text>
+          {matchInfo && matchInfo[0] && <Text>{matchInfo[0].Introduce}</Text>}
         </MatchInfoSection>
+
         <MatchInfoSection title="게임 유형">
-          {matchInfo?.GameType.map((gameType, idx) => {
-            return <GameType key={idx} gameType={gameType} />;
-          })}
+          {matchInfo && matchInfo[0] && (
+            <GameType gameType={matchInfo[0]?.GameType} />
+          )}
         </MatchInfoSection>
         <MatchInfoSection title="참가 인원">
-          <Text>
-            참가 인원 {matchInfo?.CurrentAmount} / {matchInfo?.RecruitAmount}
-          </Text>
+          {matchInfo && matchInfo[0] && (
+            <Text>
+              참가 인원 {matchInfo[0].CurrentAmount} /{" "}
+              {matchInfo[0].RecruitAmount}
+            </Text>
+          )}
         </MatchInfoSection>
         <MatchInfoSection title="매칭 위치"></MatchInfoSection>
       </ScrollView>
