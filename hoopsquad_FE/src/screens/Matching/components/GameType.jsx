@@ -1,20 +1,37 @@
 import { Text, View, StyleSheet } from "react-native";
 
 const GameType = (props) => {
-  const gameTypeColor =
-    props.gameType === 1
-      ? "#799EC1"
-      : props.gameType === 3
-      ? "#9AC78F"
-      : "#F49058";
+  const { OneOnOne, ThreeOnThree, FiveOnFive } = props.gameType[0];
 
   return (
-    <View
-      style={[styles.type, { backgroundColor: gameTypeColor, marginRight: 10 }]}
-    >
-      <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
-        {props.gameType} vs {props.gameType}
-      </Text>
+    <View style={{ flexDirection: "row" }}>
+      {OneOnOne ? (
+        <View
+          style={[styles.type, { backgroundColor: "#799EC1", marginRight: 10 }]}
+        >
+          <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
+            1 vs 1
+          </Text>
+        </View>
+      ) : null}
+      {ThreeOnThree ? (
+        <View
+          style={[styles.type, { backgroundColor: "#9AC78F", marginRight: 10 }]}
+        >
+          <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
+            3 vs 3
+          </Text>
+        </View>
+      ) : null}
+      {FiveOnFive ? (
+        <View
+          style={[styles.type, { backgroundColor: "#F49058", marginRight: 10 }]}
+        >
+          <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
+            5 vs 5
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 };
