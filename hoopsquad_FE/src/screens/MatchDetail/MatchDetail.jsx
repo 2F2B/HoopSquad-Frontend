@@ -16,10 +16,11 @@ import MapView from "react-native-maps";
 import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { REACT_APP_PROXY } from "@env";
 import formatDate from "../../utils/formatDate";
+import NavigationBar from "../../components/NavigationBar";
 import MatchInfoSection from "./components/MatchInfoSection";
 import GameType from "../Matching/components/GameType";
 import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
-
+import HoopSquadLogoPin from "../../../assets/HoopSquadLogoPin.png";
 const MatchDetail = ({ route }) => {
   const navigation = useNavigation();
   const { postingId } = route.params;
@@ -173,11 +174,13 @@ const MatchDetail = ({ route }) => {
                 }}
                 pinColor="#FF0000"
                 title={matchLocation.LocationName}
+                image={HoopSquadLogoPin}
               />
             </MapView>
           )}
         </MatchInfoSection>
       </ScrollView>
+      <NavigationBar />
     </SafeAreaView>
   );
 };
@@ -244,6 +247,7 @@ const styles = StyleSheet.create({
   googleMap: {
     width: "100%",
     height: 200,
+    marginBottom: 80,
   },
   imageDot: {
     width: 6,
