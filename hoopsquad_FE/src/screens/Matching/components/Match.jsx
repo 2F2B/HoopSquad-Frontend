@@ -1,12 +1,20 @@
 import { Text, View, Button, StyleSheet, TextInput, Image } from "react-native";
-import { Entypo } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
+import { Entypo } from "@expo/vector-icons";
+import { REACT_APP_PROXY } from "@env";
 import GameType from "./GameType";
 import HoopSquadFullLogo from "../../../../assets/HoopSquadFullLogo.png";
 
 const Match = (props) => {
-  const { Title, gameType, currentAmount, recruitAmount, Location, writeDate } =
-    props;
+  const {
+    Title,
+    gameType,
+    currentAmount,
+    recruitAmount,
+    Location,
+    writeDate,
+    Images,
+  } = props;
   const [formattedDate, setFormattedDate] = useState("");
 
   useEffect(() => {
@@ -20,80 +28,83 @@ const Match = (props) => {
     };
 
     setFormattedDate(newDate.toLocaleString("ko", options));
-  }, []);
+  }, [writeDate]);
 
   return (
-    <View
-      style={{
-        flexDirection: "row",
-        borderBottomWidth: 2,
-        borderBottomColor: "#F6F6F6",
-        marginBottom: 15,
-      }}
-    >
-      <View
-        style={{
-          marginRight: 35,
-          height: 100,
-          width: 100,
-          alignItems: "center",
-          borderWidth: 1,
-          borderColor: "#E2E2E2",
-          borderRadius: 20,
-        }}
-      >
+    <View style={styles.matchContainer}>
+      <View style={styles.matchImageWrapper}>
         <Image
           resizeMode="contain"
-          source={HoopSquadFullLogo}
-          style={{ width: "80%", height: "100%" }}
+          source={
+            Images
+              ? { uri: `${REACT_APP_PROXY}image/match/${Images.ImageData}` }
+              : HoopSquadFullLogo
+          }
+          style={styles.matchImage}
         ></Image>
       </View>
       <View>
-        <Text
-          style={{ fontSize: 13, fontWeight: "700", alignItems: "flex-start" }}
-        >
-          {Title}
-        </Text>
-        <View style={{ flexDirection: "row" }}>
-          {gameType.map((data, index) => (
-            <GameType key={index} gameType={data} />
-          ))}
-        </View>
+        <Text style={styles.matchTitle}>{Title}</Text>
 
-        <Text style={{ fontSize: 11, fontWeight: "600" }}>
+        <GameType gameType={gameType} />
+
+        <Text style={styles.matchMember}>
           참가 인원 {currentAmount}명 / {recruitAmount}명
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
+        <View style={styles.matchLocationWrapper}>
           <Entypo name="location-pin" size={16} color="black" />
-          <Text
-            style={{
-              fontSize: 11,
-              fontWeight: "600",
-              marginBottom: 5,
-              marginTop: 5,
-            }}
-          >
-            {Location}
-          </Text>
+          <Text style={styles.matchLocation}>{Location}</Text>
         </View>
-        <Text
-          style={{
-            fontSize: 9,
-            fontWeight: "600",
-            marginBottom: 10,
-            color: "#878787",
-          }}
-        >
-          {formattedDate}
-        </Text>
+        <Text style={styles.matchDate}>{formattedDate}</Text>
       </View>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  matchContainer: {
+    flexDirection: "row",
+    borderBottomWidth: 2,
+    borderBottomColor: "#F6F6F6",
+    marginBottom: 15,
+  },
+  matchImageWrapper: {
+    marginRight: 25,
+    height: "90%",
+    width: "27%",
+    alignItems: "center",
+    borderWidth: 1,
+    borderColor: "#E2E2E2",
+    borderRadius: 20,
+  },
+  matchImage: {
+    width: "80%",
+    height: "100%",
+  },
+  matchTitle: {
+    fontSize: 13,
+    fontWeight: "700",
+    alignItems: "flex-start",
+  },
+  matchMember: {
+    fontSize: 11,
+    fontWeight: "600",
+  },
+  matchLocationWrapper: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  matchLocation: {
+    fontSize: 11,
+    fontWeight: "600",
+    marginBottom: 5,
+    marginTop: 5,
+  },
+  matchDate: {
+    fontSize: 9,
+    fontWeight: "600",
+    marginBottom: 10,
+    color: "#878787",
+  },
+});
 export default Match;
