@@ -12,6 +12,7 @@ import { REACT_APP_PROXY } from "@env";
 import Matching from "../screens/Matching";
 import MatchRegister from "../screens/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
+import ChatList from "../screens/Chat/ChatList";
 
 const Navigation = () => {
   const { user, getUserInfo } = useContext(Usercontext);
@@ -67,6 +68,12 @@ const Navigation = () => {
         <Stack.Screen
           name="MatchDetail"
           component={MatchDetail}
+          options={{ headerShown: false }}
+        />
+        
+        <Stack.Screen
+          name="ChatList"
+          component={ChatList}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
