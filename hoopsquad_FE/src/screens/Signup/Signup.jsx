@@ -8,7 +8,6 @@ import {
   StyleSheet,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import fieldConfigs from "./fieldConfigs";
 import { REACT_APP_PROXY } from "@env";
@@ -77,8 +76,7 @@ const Signup = () => {
         Password: password,
       });
       alert('회원 가입 성공! 😀');
-      AsyncStorage.setItem('accessToken', response.data.token);
-      navigation.navigate('Main');
+      navigation.navigate('Login');
     } catch (error) {
       alert('회원 가입 실패. 다시 한번 시도해주세요.😥');
       console.error(error);
