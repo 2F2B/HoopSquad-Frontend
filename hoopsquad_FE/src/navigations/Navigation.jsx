@@ -2,7 +2,6 @@ import { useEffect, useContext } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
 import Login from "../screens/Login";
 import Main from "../screens/Main";
 import Signup from '../screens/Signup/Signup';
@@ -13,9 +12,10 @@ import Matching from "../screens/Matching";
 import MatchRegister from "../screens/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
 import ChatList from "../screens/Chat/ChatList";
+import authApi from "../apis/authApi";
 
 const Navigation = () => {
-  const { user, getUserInfo } = useContext(Usercontext);
+  const { user, setUser } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
 
   useEffect(() => {
@@ -30,16 +30,13 @@ const Navigation = () => {
     }
   };
 
-  const checkValidation = async (token) => {
+  const checkValidation = async () => {
     try {
-      const response = await axios.post(`${REACT_APP_PROXY}auth/validation`, {
-        access_token: token,
-      });
-
+      const response = await authApi.post(`${REACT_APP_PROXY}auth/validation`);
       if (response.status == 201) {
         AsyncStorage.setItem("accessToken", response.headers["access-token"]);
       }
-      getUserInfo(response.data.User_id);
+      setUser(response.data.profile);
     } catch (error) {
       console.error(error);
     }
@@ -50,7 +47,11 @@ const Navigation = () => {
       <Stack.Navigator
         screenOptions={{ contentStyle: { backgroundColor: "white" } }}
       >
-        <Stack.Screen name="Main" component={user ? Main : Login} />
+        {user ? (
+          <Stack.Screen name="Main" component={Main} />
+        ) : (
+          <Stack.Screen name="Login" component={Login} />
+        )}
         <Stack.Screen
           name="Match"
           component={Matching}
