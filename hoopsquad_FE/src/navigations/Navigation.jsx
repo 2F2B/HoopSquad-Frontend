@@ -5,11 +5,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import Login from "../screens/Login";
 import Main from "../screens/Main";
-import Signup from '../screens/Signup/Signup';
+import Signup from "../screens/Signup/Signup";
 import KakaoLogin from "../screens/KakaoLogin";
 import Usercontext from "../contexts/UserContext";
 import { REACT_APP_PROXY } from "@env";
-import Matching from "../screens/Matching";
+import Matching from "../screens/Matching/Matching";
 import MatchRegister from "../screens/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
 

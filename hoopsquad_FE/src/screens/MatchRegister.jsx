@@ -6,13 +6,20 @@ import {
   TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
+  Image,
+  Modal,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, LocaleConfig } from "react-native-calendars";
-import DropDownPicker from "react-native-dropdown-picker";
+import * as ImagePicker from "expo-image-picker";
+import Postcode from "@actbase/react-daum-postcode";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
+import { REACT_APP_PROXY } from "@env";
 import {
   Ionicons,
   MaterialCommunityIcons,
@@ -63,19 +70,125 @@ LocaleConfig.locales["ko"] = {
   dayNamesShort: ["일", "월", "화", "수", "목", "금", "토"],
   today: "오늘",
 };
+LocaleConfig.defaultLocale = "ko";
 
 const MatchRegister = () => {
   const navigation = useNavigation();
-
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [selectDate, setSelectDate] = useState("일자를 선택해주세요");
-  const [showDropDownHour, setShowDropDownHour] = useState(false);
+  const [timeModalOpen, setTimeModalOpen] = useState(false);
   const [selectHour, setSelectHour] = useState("");
-  const [showDropDownMinute, setShowDropDownMinute] = useState(false);
   const [selectMinute, setSelectMinute] = useState("");
+  const [gameTypeList, setGameTypeList] = useState({
+    One: false,
+    Three: false,
+    Five: false,
+  });
+  const [address, setAddress] = useState("장소를 선택해주세요");
+  const [addressModalOpen, setAddressModalOpen] = useState(false);
+  const [imageUrl, setImageUrl] = useState([]);
+  const [title, setTitle] = useState("");
+  const [currentAmount, setCurrentAmount] = useState("");
+  const [recruitAmount, setRecruitAmount] = useState("");
+  const [matchIntroduce, setMatchIntroduce] = useState("");
+  const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
+  const formData = new FormData();
 
-  const hours = Array.from({ length: 24 }, (_, i) => i + 1);
-  const minutes = Array.from({ length: 12 }, (_, i) => i * 5);
+  const changeTitle = (title) => {
+    setTitle(title);
+  };
+  const changeCurrentAmount = (currentAmount) => {
+    setCurrentAmount(currentAmount);
+  };
+  const changeRecruitAmount = (recruitAmount) => {
+    setRecruitAmount(recruitAmount);
+  };
+  const changeMatchIntroduce = (matchIntroduce) => {
+    setMatchIntroduce(matchIntroduce);
+  };
+
+  const uploadImage = async () => {
+    if (!status?.granted) {
+      const permission = await requestPermission();
+      if (!permission.granted) {
+        return null;
+      }
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      quality: 1,
+      aspect: [1, 1],
+    });
+
+    if (result.canceled) {
+      return null;
+    }
+    setImageUrl([...imageUrl, result.assets[0].uri]);
+  };
+
+  const removeImage = (index) => {
+    const updatedImageUrl = [...imageUrl];
+    updatedImageUrl.splice(index, 1);
+    setImageUrl(updatedImageUrl);
+  };
+
+  const getGameTypeKey = (number) => {
+    switch (number) {
+      case 1:
+        return "One";
+      case 3:
+        return "Three";
+      case 5:
+        return "Five";
+      default:
+        return "";
+    }
+  };
+
+  const getFormData = () => {
+    imageUrl.map((data, index) => {
+      const imageType = data.endsWith(".png") ? "image/png" : "image/jpg";
+      formData.append("Image", {
+        uri: data,
+        type: imageType,
+        name: "image." + (imageType === "image/png" ? "png" : "jpg"),
+      });
+    });
+
+    formData.append("data[Address]", address);
+    formData.append("data[CurrentAmount]", String(currentAmount));
+    formData.append("data[Five]", String(gameTypeList.Five));
+    formData.append("data[Introduce]", matchIntroduce);
+    formData.append("data[IsTeam]", String(false));
+    formData.append("data[LocationName]", "여기요");
+    formData.append("data[One]", String(gameTypeList.One));
+    formData.append(
+      "data[PlayTime]",
+      String(`${selectDate}T${selectHour}:${selectMinute}`)
+    );
+    formData.append("data[RecruitAmount]", String(recruitAmount));
+    formData.append("data[Three]", String(gameTypeList.Three));
+    formData.append("data[Title]", title);
+  };
+
+  const registerMatch = async () => {
+    getFormData();
+    const accessToken = await AsyncStorage.getItem("accessToken");
+    try {
+      await axios.post(`${REACT_APP_PROXY}match`, formData, {
+        headers: {
+          authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      navigation.navigate("Match");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -94,21 +207,16 @@ const MatchRegister = () => {
                 style={{ marginTop: 5 }}
               />
             </TouchableOpacity>
-
             <Text style={styles.headerText}>매칭 등록</Text>
           </View>
           <View>
-            <TouchableOpacity onPress={() => navigation.navigate("Match")}>
+            <TouchableOpacity onPress={() => registerMatch()}>
               <Text style={styles.headerTextSuccess}>완료</Text>
             </TouchableOpacity>
           </View>
         </View>
         <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
-          <View
-            style={{
-              padding: 20,
-            }}
-          >
+          <View style={{ padding: 20 }}>
             <View style={{ marginBottom: 20 }}>
               <View style={{ flexDirection: "row" }}>
                 <Text style={styles.inputTitle}>제목</Text>
@@ -121,7 +229,9 @@ const MatchRegister = () => {
               </View>
               <TextInput
                 placeholder="제목을 입력해주세요"
-                style={styles.inputText}
+                style={styles.textInputTitle}
+                placeholderTextColor="#8F8F8F"
+                onChangeText={changeTitle}
               ></TextInput>
             </View>
             <View style={{ marginBottom: 20 }}>
@@ -138,7 +248,17 @@ const MatchRegister = () => {
                 <Text style={styles.inputSubTitle}>시작 일자</Text>
                 <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                   <View style={[styles.selectPlace, styles.inputText]}>
-                    <Text style={styles.placeText}>{selectDate}</Text>
+                    <Text
+                      style={{
+                        color:
+                          selectDate === "일자를 선택해주세요"
+                            ? "#8F8F8F"
+                            : "black",
+                        fontSize: 12,
+                      }}
+                    >
+                      {selectDate}
+                    </Text>
                     <Feather name="calendar" size={20} color="black" />
                   </View>
                 </TouchableOpacity>
@@ -148,46 +268,45 @@ const MatchRegister = () => {
                       setSelectDate(day.dateString);
                       setShowDatePicker(false);
                     }}
-                    theme={{
-                      todayTextColor: "black",
-                      textDayFontSize: 20,
-                      textDayFontWeight: "bold",
-                      textMonthFontSize: 20,
-                      textMonthFontWeight: "bold",
-                      textSectionTitleColor: "rgba(138, 138, 138, 1)",
+                    markedDates={{
+                      [selectDate]: {
+                        selected: true,
+                        selectedColor: "#F49058",
+                      },
                     }}
+                    theme={styles.calendarTheme}
                   />
                 )}
               </View>
               <View>
                 <Text style={styles.inputSubTitle}>시작 시간</Text>
-                <View style={styles.timeWrapper}>
-                  <TouchableOpacity
-                    style={styles.dropDownBox}
-                    onPress={() => setShowDropDownHour(true)}
-                  >
-                    <View style={styles.timeBox}>
-                      <Text>시간</Text>
-                      <Entypo
-                        name="triangle-down"
-                        size={24}
-                        color="black"
-                        style={{ right: -20 }}
-                      />
+                <View>
+                  <TouchableOpacity onPress={() => setTimeModalOpen(true)}>
+                    <View style={[styles.selectPlace, styles.inputText]}>
+                      <Text
+                        style={{
+                          color: selectHour === "" ? "#8F8F8F" : "black",
+                          fontSize: 12,
+                          paddingBottom: 3,
+                        }}
+                      >
+                        {selectHour === ""
+                          ? "시간을 선택해주세요"
+                          : `${selectHour}시 ${selectMinute}분`}
+                      </Text>
                     </View>
                   </TouchableOpacity>
-
-                  <TouchableOpacity style={styles.dropDownBox}>
-                    <View style={styles.timeBox}>
-                      <Text>분</Text>
-                      <Entypo
-                        name="triangle-down"
-                        size={24}
-                        color="black"
-                        style={{ right: -20 }}
-                      />
-                    </View>
-                  </TouchableOpacity>
+                  <DateTimePickerModal
+                    isVisible={timeModalOpen}
+                    mode="time"
+                    onConfirm={(selectTime) => {
+                      setSelectHour(selectTime.getHours());
+                      setSelectMinute(selectTime.getMinutes());
+                      setTimeModalOpen(false);
+                    }}
+                    onCancel={() => setTimeModalOpen(false)}
+                    display="spinner"
+                  />
                 </View>
               </View>
             </View>
@@ -203,9 +322,32 @@ const MatchRegister = () => {
               </View>
               <View style={styles.gameTypeWrapper}>
                 {[1, 3, 5].map((number, index) => (
-                  <TouchableOpacity style={styles.gameType} key={index}>
+                  <TouchableOpacity
+                    style={[
+                      styles.gameType,
+                      {
+                        borderColor: gameTypeList[getGameTypeKey(number)]
+                          ? "#F3A241"
+                          : "#CDCDCD",
+                      },
+                    ]}
+                    key={index}
+                    onPress={() => {
+                      setGameTypeList((prevState) => ({
+                        ...prevState,
+                        [getGameTypeKey(number)]:
+                          !prevState[getGameTypeKey(number)],
+                      }));
+                    }}
+                  >
                     <View style={{ alignItems: "center" }}>
-                      <Text>
+                      <Text
+                        style={{
+                          color: gameTypeList[getGameTypeKey(number)]
+                            ? "#F3A241"
+                            : "black",
+                        }}
+                      >
                         {number} vs {number}
                       </Text>
                     </View>
@@ -228,6 +370,8 @@ const MatchRegister = () => {
                 <TextInput
                   placeholder="현재 인원"
                   style={styles.inputPersonnel}
+                  placeholderTextColor="#8F8F8F"
+                  onChangeText={changeCurrentAmount}
                 ></TextInput>
                 <MaterialCommunityIcons
                   name="slash-forward"
@@ -238,6 +382,8 @@ const MatchRegister = () => {
                 <TextInput
                   placeholder="모집 인원"
                   style={styles.inputPersonnel}
+                  placeholderTextColor="#8F8F8F"
+                  onChangeText={changeRecruitAmount}
                 ></TextInput>
               </View>
             </View>
@@ -251,44 +397,91 @@ const MatchRegister = () => {
                   style={styles.essentialIcon}
                 />
               </View>
-              <TouchableOpacity>
+              {addressModalOpen && (
+                <Modal>
+                  <View style={styles.header}>
+                    <View style={styles.headerTextWrapper}>
+                      <TouchableOpacity
+                        onPress={() => setAddressModalOpen(false)}
+                      >
+                        <Ionicons
+                          name="chevron-back"
+                          size={30}
+                          color="black"
+                          style={{ marginTop: 5 }}
+                        />
+                      </TouchableOpacity>
+                      <Text style={styles.headerText}>주소 등록</Text>
+                    </View>
+                  </View>
+                  <Postcode
+                    style={{ width: "100%", height: "100%" }}
+                    jsOptions={{ animation: true, hideMapBtn: true }}
+                    onSelected={(data) => {
+                      setAddress(data.address);
+                      setAddressModalOpen(false);
+                    }}
+                  />
+                </Modal>
+              )}
+              <TouchableOpacity onPress={() => setAddressModalOpen(true)}>
                 <View style={[styles.selectPlace, styles.inputText]}>
-                  <Text style={styles.placeText}>장소를 선택해주세요</Text>
+                  <Text
+                    style={{
+                      color:
+                        address == "장소를 선택해주세요" ? "#8F8F8F" : "black",
+                      fontSize: 12,
+                    }}
+                  >
+                    {address}
+                  </Text>
                   <Entypo name="chevron-right" size={22} color="black" />
                 </View>
               </TouchableOpacity>
             </View>
-
             <View style={{ marginBottom: 20 }}>
-              <Text style={styles.inputTitle}>사진</Text>
-              <View style={styles.gameTypeWrapper}>
-                <TouchableOpacity style={styles.imageBox}>
-                  <View>
-                    <Feather name="plus-circle" size={35} color="#E2E2E2" />
-                  </View>
-                </TouchableOpacity>
-              </View>
+              <Text style={styles.inputTitle}>
+                사진 (이미지를 터치하면 이미지가 삭제됩니다)
+              </Text>
+              <ScrollView horizontal style={{ height: 120 }}>
+                <View style={{ flexDirection: "row" }}>
+                  <TouchableOpacity
+                    style={styles.imageBox}
+                    onPress={uploadImage}
+                  >
+                    <View>
+                      <Feather name="plus-circle" size={35} color="#E2E2E2" />
+                    </View>
+                  </TouchableOpacity>
+                  {imageUrl.map((imageUrl, index) => (
+                    <TouchableOpacity
+                      style={styles.imageWrapper}
+                      onPress={() => removeImage(index)}
+                      key={index}
+                    >
+                      <View style={styles.imageView}>
+                        <Image
+                          source={{ uri: imageUrl }}
+                          style={{ width: "100%", height: "100%" }}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </ScrollView>
             </View>
             <View>
               <Text style={styles.inputTitle}>매칭 안내</Text>
               <TextInput
                 placeholder="매칭 안내 정보를 입력해주세요"
                 style={styles.inputMatchGuide}
+                placeholderTextColor="#8F8F8F"
+                onChangeText={changeMatchIntroduce}
               ></TextInput>
             </View>
           </View>
         </ScrollView>
-
-        <View
-          style={{
-            position: "absolute",
-            bottom: 0,
-            borderWidth: 1,
-            width: "100%",
-          }}
-        >
-          <NavigationBar />
-        </View>
+        <NavigationBar />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
@@ -323,6 +516,17 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 10,
   },
+  textInputTitle: {
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingLeft: 20,
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingRight: 10,
+    borderColor: "#CDCDCD",
+    fontSize: 12,
+    width: "85%",
+  },
   inputSubTitle: {
     fontSize: 10,
     color: "#8F8F8F",
@@ -342,6 +546,7 @@ const styles = StyleSheet.create({
     borderColor: "#CDCDCD",
     fontSize: 12,
     width: "85%",
+    alignContent: "center",
   },
   gameTypeWrapper: {
     flexDirection: "row",
@@ -350,11 +555,10 @@ const styles = StyleSheet.create({
   gameType: {
     borderWidth: 1,
     borderRadius: 10,
-    borderColor: "#CDCDCD",
     fontSize: 12,
     width: "30%",
-    paddingTop: 5,
-    paddingBottom: 5,
+    paddingTop: 7,
+    paddingBottom: 7,
     textAlign: "center",
   },
   inputPersonnel: {
@@ -369,15 +573,11 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
   },
-  placeText: {
-    fontSize: 12,
-    color: "#8F8F8F",
-  },
   imageBox: {
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#E2E2E2",
-    width: "30%",
+    height: "85%",
     aspectRatio: 1,
     alignItems: "center",
     justifyContent: "center",
@@ -387,7 +587,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "#CDCDCD",
-    color: "#8F8F8F",
     fontSize: 12,
     paddingLeft: 20,
     paddingTop: 15,
@@ -412,13 +611,28 @@ const styles = StyleSheet.create({
     width: "30%",
     marginRight: 20,
   },
-  timeWrapper: {
-    flexDirection: "row",
-    flex: 1,
-  },
   timeBox: {
     flexDirection: "row",
     justifyContent: "center",
+  },
+  calendarTheme: {
+    todayTextColor: "black",
+    textDayFontWeight: "bold",
+    textMonthFontSize: 20,
+    textMonthFontWeight: "bold",
+    textSectionTitleColor: "rgba(138, 138, 138, 1)",
+    dayTextColor: "#808080",
+  },
+  imageWrapper: {
+    height: "85%",
+    aspectRatio: 1,
+    flexDirection: "row",
+    marginLeft: 10,
+  },
+  imageView: {
+    width: "100%",
+    overflow: "hidden",
+    borderRadius: 10,
   },
 });
 export default MatchRegister;
