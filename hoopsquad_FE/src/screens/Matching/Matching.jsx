@@ -148,7 +148,6 @@ const Matching = () => {
                     onPress={() =>
                       navigation.navigate("MatchDetail", { postingId })
                     }
-                    style={{ height: "50%" }}
                   >
                     <Match
                       Title={data.Title}

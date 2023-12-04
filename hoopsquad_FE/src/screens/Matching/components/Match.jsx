@@ -34,7 +34,7 @@ const Match = (props) => {
     <View style={styles.matchContainer}>
       <View style={styles.matchImageWrapper}>
         <Image
-          resizeMode="contain"
+          resizeMode="cover"
           source={
             Images
               ? { uri: `${REACT_APP_PROXY}image/match/${Images.ImageData}` }
@@ -70,15 +70,16 @@ const styles = StyleSheet.create({
   },
   matchImageWrapper: {
     marginRight: 25,
-    height: "90%",
+    height: 100,
     width: "27%",
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#E2E2E2",
     borderRadius: 20,
+    overflow: "hidden",
   },
   matchImage: {
-    width: "80%",
+    width: "100%",
     height: "100%",
   },
   matchTitle: {
