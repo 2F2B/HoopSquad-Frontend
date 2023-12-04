@@ -38,7 +38,7 @@ const Login = () => {
         Password : password,
       });
       AsyncStorage.setItem('accessToken', res.data.token);
-      setUser(res.data.Name);
+      setUser(res.data.profile);
       navigation.navigate('Main');
     } catch (error) {
       console.error(error);
