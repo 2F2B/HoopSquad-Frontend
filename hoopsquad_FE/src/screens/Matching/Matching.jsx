@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import DropDownPicker from "react-native-dropdown-picker";
+import { useIsFocused } from "@react-navigation/native";
 import { AntDesign, Feather, Entypo, Foundation } from "@expo/vector-icons";
 import Match from "./components/Match";
 import { REACT_APP_PROXY } from "@env";
@@ -31,6 +32,7 @@ const Matching = () => {
     Five: false,
   });
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
 
   const Sorts = [
     { label: "작성 날짜", value: "WriteDate" },
@@ -41,7 +43,7 @@ const Matching = () => {
     getMatch(
       `?all=true&Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=`
     );
-  }, [selectSort]);
+  }, [selectSort, isFocused]);
 
   const searchGameType = async () => {
     getMatch(
