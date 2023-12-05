@@ -10,7 +10,7 @@ const Main = () => {
     <View style={styles.container}>
       <View>
         <Text style={styles.testText1}>로그인 테스트 화면입니다</Text>
-        <Text style={styles.testText2}>{user}</Text>
+        <Text style={styles.testText2}>{user.Name}</Text>
       </View>
       <View style={styles.center}>
         <TouchableOpacity style={styles.buttonStyle} onPress={() => logout()}>

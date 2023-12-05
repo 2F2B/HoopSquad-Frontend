@@ -44,6 +44,7 @@ const NavigationBar = () => {
 
       <TouchableOpacity
         style={{ height: 35, width: "20%", alignItems: "center" }}
+        onPress={() => navigation.navigate("ChatList")}
       >
         <Image
           source={Chat}

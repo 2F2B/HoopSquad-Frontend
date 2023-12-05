@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
       const response = await axios.get(
         `${REACT_APP_PROXY}profile/user/${userId}`
       );
-      setUser(response.data.Name);
+      setUser(response.data);
     } catch (error) {
       console.error(error);
     }
