@@ -70,8 +70,8 @@ const styles = StyleSheet.create({
   },
   matchImageWrapper: {
     marginRight: 25,
-    height: 100,
     width: "27%",
+    aspectRatio: 1 / 1,
     alignItems: "center",
     borderWidth: 1,
     borderColor: "#E2E2E2",
