@@ -33,7 +33,7 @@ const MatchDetailModal = (props) => {
         <Text style={styles.deleteModalText}>
           {props.matchUserId === user.User_id
             ? "해당 매칭 정보가 삭제됩니다."
-            : "참여 신청 후 정상적인 참여가 이뤄지지 않을 경우 훕스코어가 대폭 감소할 수 있습니다"}
+            : "참여 신청 후 정상적인 참여가 이뤄지지 않을 경우\n훕스코어가 대폭 감소할 수 있습니다"}
         </Text>
       </View>
 

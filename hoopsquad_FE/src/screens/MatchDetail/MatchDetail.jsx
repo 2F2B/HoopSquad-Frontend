@@ -130,7 +130,7 @@ const MatchDetail = ({ route }) => {
               <Image
                 resizeMode="contain"
                 source={HoopSquadFullLogo}
-                style={styles.scrollImage}
+                style={[styles.scrollImage, openModal && { opacity: 0.2 }]}
               ></Image>
             </View>
           )}
