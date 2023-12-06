@@ -224,7 +224,16 @@ const Profile = ({ route }) => {
             <Ionicons name="chevron-forward" size={18} color="#464646" />
           </View>
           {/* 팀 존재 or 팀 없음 */}
-          <View style={styles.profileUserTeamWrapper}>
+          <View
+            style={[
+              styles.profileUserTeamWrapper,
+              {
+                borderBottomColor: hoopScoreModal
+                  ? "rgba(0, 0, 0, 0.1)"
+                  : "#E2E2E2",
+              },
+            ]}
+          >
             {profileInfo?.Team.length > 0 ? (
               <>
                 <View

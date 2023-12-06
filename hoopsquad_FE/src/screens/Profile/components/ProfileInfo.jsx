@@ -29,7 +29,7 @@ const ProfileInfo = (props) => {
         <Text
           style={{
             fontSize: props.titleFontSize,
-            marginBottom: props.titleFontSize !== 14 ? 10 : 0,
+            marginBottom: props.titleFontSize !== 14 ? 5 : 0,
           }}
         >
           {props.Title}
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#E2E2E2",
     flexDirection: "row",
     alignItems: "center",
+    flex: 1,
   },
   profileInfoImageWrapper: {
     backgroundColor: "rgba(226, 226, 226, 0.4)",

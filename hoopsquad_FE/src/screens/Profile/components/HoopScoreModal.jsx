@@ -23,13 +23,13 @@ const HoopScoreModal = (props) => {
           평가, 후기, 매칭 참가 여부 등을 종합해서 만든 지표입니다.
         </Text>
       </View>
-      <View style={{ paddingLeft: 30 }}>
+      <View style={styles.modalRankWrapper}>
         <ProfileInfo
           Image={Rank_Rookie}
           Title={"루키"}
           Text={"훕스코어 0 ~ 99점의 루키"}
           titleFontSize={20}
-          rankImageWidth={"26%"}
+          rankImageWidth={"24%"}
           textMargin={20}
         />
         <ProfileInfo
@@ -37,7 +37,7 @@ const HoopScoreModal = (props) => {
           Title={"아마추어"}
           Text={"훕스코어 100 ~ 199점의 아마추어"}
           titleFontSize={20}
-          rankImageWidth={"26%"}
+          rankImageWidth={"24%"}
           textMargin={20}
         />
         <ProfileInfo
@@ -45,7 +45,7 @@ const HoopScoreModal = (props) => {
           Title={"프로"}
           Text={"훕스코어 200 ~ 299점의 프로"}
           titleFontSize={20}
-          rankImageWidth={"26%"}
+          rankImageWidth={"24%"}
           textMargin={20}
         />
         <ProfileInfo
@@ -53,7 +53,7 @@ const HoopScoreModal = (props) => {
           Title={"슈퍼스타"}
           Text={"훕스코어 300점 이상의 슈퍼스타"}
           titleFontSize={20}
-          rankImageWidth={"26%"}
+          rankImageWidth={"24%"}
           textMargin={20}
         />
       </View>
@@ -90,6 +90,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 12,
     color: "#4E4C4C",
+  },
+  modalRankWrapper: {
+    paddingLeft: 30,
+    paddingBottom: 10,
+    justifyContent: "space-between",
+    height: "75%",
+    display: "flex",
   },
 });
 export default HoopScoreModal;
