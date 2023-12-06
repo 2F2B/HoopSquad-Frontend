@@ -12,6 +12,7 @@ import Matching from "../screens/Matching/Matching";
 import MatchRegister from "../screens/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
 import ChatList from "../screens/Chat/ChatList";
+import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
 
 const Navigation = () => {
@@ -71,10 +72,16 @@ const Navigation = () => {
           component={MatchDetail}
           options={{ headerShown: false }}
         />
-        
+
         <Stack.Screen
           name="ChatList"
           component={ChatList}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
