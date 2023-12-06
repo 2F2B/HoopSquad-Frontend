@@ -1,5 +1,7 @@
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
+import Usercontext from "../contexts/UserContext";
 import Team from "../../assets/Team.png";
 import Chat from "../../assets/Chat.png";
 import Matching from "../../assets/Matching.png";
@@ -8,6 +10,7 @@ import Profile from "../../assets/Profile.png";
 
 const NavigationBar = (props) => {
   const navigation = useNavigation();
+  const { user } = useContext(Usercontext);
 
   return (
     <View
@@ -55,7 +58,9 @@ const NavigationBar = (props) => {
       </TouchableOpacity>
       <TouchableOpacity
         style={styles.navigationBox}
-        onPress={() => navigation.navigate("Profile")}
+        onPress={() =>
+          navigation.navigate("Profile", { profileId: user.User_id })
+        }
       >
         <Image
           source={Profile}
