@@ -63,7 +63,7 @@ const MatchDetail = ({ route }) => {
     >
       {openModal && (
         <MatchDetailModal
-          matchUserId={matchInfo?.Posting[0].User_id}
+          matchUserId={matchInfo?.User_id}
           setOpenModal={setOpenModal}
           postingId={postingId}
         />
@@ -95,7 +95,7 @@ const MatchDetail = ({ route }) => {
                 { opacity: openModal ? 0.3 : 1 },
               ]}
             >
-              {matchInfo?.Posting[0].User_id === user.User_id ? "삭제" : "신청"}
+              {matchInfo?.User_id === user.User_id ? "삭제" : "신청"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -110,9 +110,10 @@ const MatchDetail = ({ route }) => {
           }}
           style={styles.scrollImage}
           onScroll={(event) => handleScroll(event)}
+          scrollEventThrottle={16}
         >
-          {matchInfo?.Posting[0].Image.length > 0 ? (
-            matchInfo.Posting[0].Image.map((image, index) => {
+          {matchInfo?.Image.length > 0 ? (
+            matchInfo.Image.map((image, index) => {
               return (
                 <View key={index} style={{ width: screenWidth }}>
                   <Image
@@ -136,7 +137,7 @@ const MatchDetail = ({ route }) => {
           )}
         </ScrollView>
         <View style={{ flexDirection: "row" }}>
-          {matchInfo?.Posting[0].Image.map((_, index) => {
+          {matchInfo?.Image.map((_, index) => {
             return (
               <View
                 key={index}
@@ -160,31 +161,47 @@ const MatchDetail = ({ route }) => {
           { borderBottomColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
         ]}
       >
-        <>
-          <Text style={styles.titleText}>{matchInfo?.Posting[0].Title}</Text>
+        <TouchableOpacity
+          style={[
+            styles.matchWriteImage,
+            openModal && { backgroundColor: "rgba(0, 0, 0, 0.3)" },
+            { borderColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
+          ]}
+          onPress={() =>
+            navigation.navigate("Profile", {
+              profileId: matchInfo?.User_id,
+            })
+          }
+        >
+          <Image
+            resizeMode="cover"
+            source={{
+              uri: `${REACT_APP_PROXY}image/user/${matchInfo?.WriterImage.ImageData}`,
+            }}
+            style={[styles.imageSize, { opacity: openModal ? 0.3 : 1 }]}
+          ></Image>
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.titleText}>{matchInfo?.Title}</Text>
           <Text style={styles.timeText}>
-            {formatDate(matchInfo?.Posting[0].WriteDate)}
+            {formatDate(matchInfo?.WriteDate)}
           </Text>
-        </>
+        </View>
       </View>
 
       <ScrollView style={styles.contentContainer}>
         <MatchInfoSection title="매칭 안내">
-          <Text>{matchInfo?.Posting[0].Introduce}</Text>
+          <Text>{matchInfo?.Introduce}</Text>
         </MatchInfoSection>
 
         <MatchInfoSection title="게임 유형">
           {matchInfo && (
-            <GameType
-              gameType={matchInfo.Posting[0].GameType}
-              opacity={openModal}
-            />
+            <GameType gameType={matchInfo.GameType} opacity={openModal} />
           )}
         </MatchInfoSection>
         <MatchInfoSection title="참가 인원">
           <Text>
-            {matchInfo?.Posting[0].CurrentAmount}명 /
-            {matchInfo?.Posting[0].RecruitAmount}명
+            {matchInfo?.CurrentAmount}명 / {matchInfo?.RecruitAmount}명
           </Text>
         </MatchInfoSection>
         <MatchInfoSection title="매칭 위치">
@@ -250,6 +267,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingBottom: 15,
     borderBottomWidth: 0.5,
+    flexDirection: "row",
   },
   titleText: {
     fontSize: 20,
@@ -284,6 +302,21 @@ const styles = StyleSheet.create({
     height: 6,
     marginRight: 5,
     borderRadius: 5,
+  },
+  matchWriteImage: {
+    backgroundColor: "white",
+    borderRadius: 100,
+    aspectRatio: 1 / 1,
+    width: "14%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 20,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  imageSize: {
+    width: "100%",
+    height: "100%",
   },
 });
 export default MatchDetail;
