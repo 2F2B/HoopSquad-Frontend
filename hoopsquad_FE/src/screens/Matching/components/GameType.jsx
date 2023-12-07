@@ -7,7 +7,13 @@ const GameType = (props) => {
     <View style={{ flexDirection: "row" }}>
       {OneOnOne ? (
         <View
-          style={[styles.type, { backgroundColor: "#799EC1", marginRight: 10 }]}
+          style={[
+            styles.type,
+            {
+              backgroundColor: "#799EC1",
+              opacity: props.opacity ? 0.1 : 1,
+            },
+          ]}
         >
           <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
             1 vs 1
@@ -16,7 +22,13 @@ const GameType = (props) => {
       ) : null}
       {ThreeOnThree ? (
         <View
-          style={[styles.type, { backgroundColor: "#9AC78F", marginRight: 10 }]}
+          style={[
+            styles.type,
+            {
+              backgroundColor: "#9AC78F",
+              opacity: props.opacity ? 0.1 : 1,
+            },
+          ]}
         >
           <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
             3 vs 3
@@ -25,7 +37,13 @@ const GameType = (props) => {
       ) : null}
       {FiveOnFive ? (
         <View
-          style={[styles.type, { backgroundColor: "#F49058", marginRight: 10 }]}
+          style={[
+            styles.type,
+            {
+              backgroundColor: "#F49058",
+              opacity: props.opacity ? 0.1 : 1,
+            },
+          ]}
         >
           <Text style={{ color: "white", fontSize: 12, fontWeight: "700" }}>
             5 vs 5
@@ -34,6 +52,10 @@ const GameType = (props) => {
       ) : null}
     </View>
   );
+};
+
+GameType.defaultProps = {
+  opacity: false,
 };
 
 const styles = StyleSheet.create({
@@ -47,6 +69,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 5,
     marginTop: 5,
+    marginRight: 10,
   },
 });
 export default GameType;

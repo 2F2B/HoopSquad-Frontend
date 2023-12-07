@@ -1,86 +1,71 @@
-import {
-  Text,
-  View,
-  StyleSheet,
-  TouchableOpacity,
-  Image,
-} from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useContext } from "react";
+import Usercontext from "../contexts/UserContext";
 import Team from "../../assets/Team.png";
 import Chat from "../../assets/Chat.png";
 import Matching from "../../assets/Matching.png";
 import BasketBallCourt from "../../assets/BasketBallCourt.png";
 import Profile from "../../assets/Profile.png";
 
-const NavigationBar = () => {
+const NavigationBar = (props) => {
   const navigation = useNavigation();
+  const { user } = useContext(Usercontext);
+
   return (
     <View
-      style={{
-        flexDirection: "row",
-        justifyContent: "space-between",
-        position: "absolute",
-        bottom: 0,
-        borderTopWidth: 1,
-        backgroundColor: "#ffffff",
-        borderColor : "#E2E2E2",
-        height: 65,
-      }}
+      style={[
+        styles.navigationBarContainer,
+        { borderTopColor: props.opacity ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
+        { backgroundColor: props.opacity ? "#878787" : "#ffffff" },
+      ]}
     >
-      <TouchableOpacity
-        style={{
-          height: 35,
-          width: "20%",
-          alignItems: "center",
-        }}
-      >
+      <TouchableOpacity style={styles.navigationBox}>
         <Image
           source={Team}
           resizeMode="contain"
-          style={{ width: "100%", height: "100%", marginTop: 5 }}
+          style={styles.navigationImg}
         ></Image>
         <Text>팀</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity
-        style={{ height: 35, width: "20%", alignItems: "center" }}
-        onPress={() => navigation.navigate("ChatList")}
-      >
+      <TouchableOpacity style={styles.navigationBox}>
         <Image
           source={Chat}
           resizeMode="contain"
-          style={{ width: "100%", height: "100%", marginTop: 5 }}
+          style={styles.navigationImg}
         ></Image>
         <Text>채팅</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={{ height: 35, width: "20%", alignItems: "center" }}
+        style={styles.navigationBox}
         onPress={() => navigation.navigate("Match")}
       >
         <Image
           source={Matching}
           resizeMode="contain"
-          style={{ width: "100%", height: "100%", marginTop: 5 }}
+          style={styles.navigationImg}
         ></Image>
         <Text>매칭</Text>
       </TouchableOpacity>
-      <TouchableOpacity
-        style={{ height: 35, width: "20%", alignItems: "center" }}
-      >
+      <TouchableOpacity style={styles.navigationBox}>
         <Image
           source={BasketBallCourt}
           resizeMode="contain"
-          style={{ width: "100%", height: "100%", marginTop: 5 }}
+          style={styles.navigationImg}
         ></Image>
         <Text>농구장</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={{ height: 35, width: "20%", alignItems: "center" }}
+        style={styles.navigationBox}
+        onPress={() =>
+          navigation.navigate("Profile", { profileId: user.User_id })
+        }
       >
         <Image
           source={Profile}
           resizeMode="contain"
-          style={{ width: "100%", height: "100%", marginTop: 5 }}
+          style={styles.navigationImg}
         ></Image>
         <Text>프로필</Text>
       </TouchableOpacity>
@@ -88,4 +73,28 @@ const NavigationBar = () => {
   );
 };
 
+NavigationBar.defaultProps = {
+  opacity: false,
+};
+
+const styles = StyleSheet.create({
+  navigationBarContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    position: "absolute",
+    bottom: 0,
+    borderTopWidth: 1,
+    height: 65,
+  },
+  navigationBox: {
+    height: 35,
+    width: "20%",
+    alignItems: "center",
+  },
+  navigationImg: {
+    width: "100%",
+    height: "100%",
+    marginTop: 5,
+  },
+});
 export default NavigationBar;

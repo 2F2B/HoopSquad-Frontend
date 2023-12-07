@@ -12,6 +12,7 @@ import Matching from "../screens/Matching/Matching";
 import MatchRegister from "../screens/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
 import ChatList from "../screens/Chat/ChatList";
+import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
 import ChatRoom from "../screens/Chat/ChatRoom";
 
@@ -78,6 +79,11 @@ const Navigation = () => {
         <Stack.Screen
           name="ChatRoom"
           component={ChatRoom}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Profile"
+          component={Profile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

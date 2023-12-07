@@ -7,7 +7,7 @@ import {
   ScrollView,
   Dimensions,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -19,14 +19,18 @@ import formatDate from "../../utils/formatDate";
 import NavigationBar from "../../components/NavigationBar";
 import MatchInfoSection from "./components/MatchInfoSection";
 import GameType from "../Matching/components/GameType";
+import Usercontext from "../../contexts/UserContext";
+import MatchDetailModal from "./components/MatchDetailModal";
 import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
 import HoopSquadLogoPin from "../../../assets/HoopSquadLogoPin.png";
+
 const MatchDetail = ({ route }) => {
   const navigation = useNavigation();
   const { postingId } = route.params;
   const [matchInfo, setMatchInfo] = useState(null);
-  const [matchLocation, setMatchLocation] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
+  const { user } = useContext(Usercontext);
   const screenWidth = Dimensions.get("window").width;
 
   useEffect(() => {
@@ -38,8 +42,7 @@ const MatchDetail = ({ route }) => {
       const response = await axios.get(
         `${REACT_APP_PROXY}match/?info=true&Posting_id=${postingId}`
       );
-      setMatchLocation(response.data);
-      setMatchInfo(response.data.Posting);
+      setMatchInfo(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -52,10 +55,29 @@ const MatchDetail = ({ route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.matchDetail}>
-      <View style={styles.header}>
+    <SafeAreaView
+      style={[
+        styles.matchDetail,
+        openModal && { backgroundColor: "rgba(0, 0, 0, 0.5)" },
+      ]}
+    >
+      {openModal && (
+        <MatchDetailModal
+          matchUserId={matchInfo?.User_id}
+          setOpenModal={setOpenModal}
+          postingId={postingId}
+        />
+      )}
+      <View
+        style={[
+          styles.header,
+          { borderBottomColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
+        ]}
+      >
         <View style={styles.headerTitle}>
-          <TouchableOpacity onPress={() => navigation.navigate("Match")}>
+          <TouchableOpacity
+            onPress={() => !openModal && navigation.navigate("Match")}
+          >
             <Ionicons
               name="chevron-back"
               size={30}
@@ -66,8 +88,15 @@ const MatchDetail = ({ route }) => {
           <Text style={styles.headerLeftChildText}>매칭 상세</Text>
         </View>
         <View>
-          <TouchableOpacity onPress={() => navigation.navigate("Match")}>
-            <Text style={styles.headerRightChildText}>신청</Text>
+          <TouchableOpacity onPress={() => setOpenModal(true)}>
+            <Text
+              style={[
+                styles.headerRightChildText,
+                { opacity: openModal ? 0.3 : 1 },
+              ]}
+            >
+              {matchInfo?.User_id === user.User_id ? "삭제" : "신청"}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -81,9 +110,10 @@ const MatchDetail = ({ route }) => {
           }}
           style={styles.scrollImage}
           onScroll={(event) => handleScroll(event)}
+          scrollEventThrottle={16}
         >
-          {matchInfo && matchInfo[0].Image.length > 0 ? (
-            matchInfo[0].Image.map((image, index) => {
+          {matchInfo?.Image.length > 0 ? (
+            matchInfo.Image.map((image, index) => {
               return (
                 <View key={index} style={{ width: screenWidth }}>
                   <Image
@@ -91,7 +121,7 @@ const MatchDetail = ({ route }) => {
                     source={{
                       uri: `${REACT_APP_PROXY}image/match/${image.ImageData}`,
                     }}
-                    style={styles.scrollImage}
+                    style={[styles.scrollImage, openModal && { opacity: 0.2 }]}
                   />
                 </View>
               );
@@ -101,67 +131,86 @@ const MatchDetail = ({ route }) => {
               <Image
                 resizeMode="contain"
                 source={HoopSquadFullLogo}
-                style={styles.scrollImage}
+                style={[styles.scrollImage, openModal && { opacity: 0.2 }]}
               ></Image>
             </View>
           )}
         </ScrollView>
         <View style={{ flexDirection: "row" }}>
-          {matchInfo &&
-            matchInfo[0].Image.map((_, index) => {
-              return (
-                <View
-                  key={index}
-                  style={[
-                    styles.imageDot,
-                    {
-                      backgroundColor:
-                        index === imageIndex ? "#F49058" : "#D9D9D9",
-                    },
-                  ]}
-                ></View>
-              );
-            })}
+          {matchInfo?.Image.map((_, index) => {
+            return (
+              <View
+                key={index}
+                style={[
+                  styles.imageDot,
+                  {
+                    backgroundColor:
+                      index === imageIndex ? "#F49058" : "#D9D9D9",
+                    opacity: openModal ? 0.3 : 1,
+                  },
+                ]}
+              ></View>
+            );
+          })}
         </View>
       </View>
 
-      <View style={styles.titleContainer}>
-        {matchInfo && matchInfo[0] && (
-          <>
-            <Text style={styles.titleText}>{matchInfo[0].Title}</Text>
-            {matchInfo[0].WriteDate && (
-              <Text style={styles.timeText}>
-                {formatDate(matchInfo[0].WriteDate)}
-              </Text>
-            )}
-          </>
-        )}
+      <View
+        style={[
+          styles.titleContainer,
+          { borderBottomColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
+        ]}
+      >
+        <TouchableOpacity
+          style={[
+            styles.matchWriteImage,
+            openModal && { backgroundColor: "rgba(0, 0, 0, 0.3)" },
+            { borderColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
+          ]}
+          onPress={() =>
+            navigation.navigate("Profile", {
+              profileId: matchInfo?.User_id,
+            })
+          }
+        >
+          <Image
+            resizeMode="cover"
+            source={{
+              uri: `${REACT_APP_PROXY}image/user/${matchInfo?.WriterImage.ImageData}`,
+            }}
+            style={[styles.imageSize, { opacity: openModal ? 0.3 : 1 }]}
+          ></Image>
+        </TouchableOpacity>
+        <View>
+          <Text style={styles.titleText}>{matchInfo?.Title}</Text>
+          <Text style={styles.timeText}>
+            {formatDate(matchInfo?.WriteDate)}
+          </Text>
+        </View>
       </View>
 
       <ScrollView style={styles.contentContainer}>
         <MatchInfoSection title="매칭 안내">
-          {matchInfo && matchInfo[0] && <Text>{matchInfo[0].Introduce}</Text>}
+          <Text>{matchInfo?.Introduce}</Text>
         </MatchInfoSection>
 
         <MatchInfoSection title="게임 유형">
-          {matchInfo && matchInfo[0] && (
-            <GameType gameType={matchInfo[0]?.GameType} />
+          {matchInfo && (
+            <GameType gameType={matchInfo.GameType} opacity={openModal} />
           )}
         </MatchInfoSection>
         <MatchInfoSection title="참가 인원">
-          {matchInfo && matchInfo[0] && (
-            <Text>
-              {matchInfo[0].CurrentAmount}명 / {matchInfo[0].RecruitAmount}명
-            </Text>
-          )}
+          <Text>
+            {matchInfo?.CurrentAmount}명 / {matchInfo?.RecruitAmount}명
+          </Text>
         </MatchInfoSection>
         <MatchInfoSection title="매칭 위치">
-          {matchLocation && (
+          {matchInfo && (
             <MapView
-              style={styles.googleMap}
+              style={[styles.googleMap, openModal && { opacity: 0.1 }]}
               initialRegion={{
-                latitude: matchLocation.Lat,
-                longitude: matchLocation.Lng,
+                latitude: matchInfo.Lat,
+                longitude: matchInfo.Lng,
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01,
               }}
@@ -169,18 +218,18 @@ const MatchDetail = ({ route }) => {
             >
               <Marker
                 coordinate={{
-                  latitude: matchLocation.Lat,
-                  longitude: matchLocation.Lng,
+                  latitude: matchInfo.Lat,
+                  longitude: matchInfo.Lng,
                 }}
                 pinColor="#FF0000"
-                title={matchLocation.LocationName}
+                title={matchInfo.LocationName}
                 image={HoopSquadLogoPin}
               />
             </MapView>
           )}
         </MatchInfoSection>
       </ScrollView>
-      <NavigationBar />
+      <NavigationBar opacity={openModal} />
     </SafeAreaView>
   );
 };
@@ -196,7 +245,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     paddingBottom: 15,
     justifyContent: "space-between",
-    borderBottomColor: "#E2E2E2",
   },
   headerLeftChildText: {
     fontSize: 20,
@@ -219,7 +267,7 @@ const styles = StyleSheet.create({
     paddingLeft: 20,
     paddingBottom: 15,
     borderBottomWidth: 0.5,
-    borderColor: "#E2E2E2",
+    flexDirection: "row",
   },
   titleText: {
     fontSize: 20,
@@ -254,6 +302,21 @@ const styles = StyleSheet.create({
     height: 6,
     marginRight: 5,
     borderRadius: 5,
+  },
+  matchWriteImage: {
+    backgroundColor: "white",
+    borderRadius: 100,
+    aspectRatio: 1 / 1,
+    width: "14%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 20,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  imageSize: {
+    width: "100%",
+    height: "100%",
   },
 });
 export default MatchDetail;
