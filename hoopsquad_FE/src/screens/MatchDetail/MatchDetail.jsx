@@ -12,17 +12,15 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import MapView from "react-native-maps";
-import { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { REACT_APP_PROXY } from "@env";
 import formatDate from "../../utils/formatDate";
 import NavigationBar from "../../components/NavigationBar";
+import GoogleMap from "../../components/GoogleMap";
 import MatchInfoSection from "./components/MatchInfoSection";
 import GameType from "../Matching/components/GameType";
 import Usercontext from "../../contexts/UserContext";
 import MatchDetailModal from "./components/MatchDetailModal";
 import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
-import HoopSquadLogoPin from "../../../assets/HoopSquadLogoPin.png";
 
 const MatchDetail = ({ route }) => {
   const navigation = useNavigation();
@@ -206,26 +204,12 @@ const MatchDetail = ({ route }) => {
         </MatchInfoSection>
         <MatchInfoSection title="매칭 위치">
           {matchInfo && (
-            <MapView
-              style={[styles.googleMap, openModal && { opacity: 0.1 }]}
-              initialRegion={{
-                latitude: matchInfo.Lat,
-                longitude: matchInfo.Lng,
-                latitudeDelta: 0.01,
-                longitudeDelta: 0.01,
-              }}
-              provider={PROVIDER_GOOGLE}
-            >
-              <Marker
-                coordinate={{
-                  latitude: matchInfo.Lat,
-                  longitude: matchInfo.Lng,
-                }}
-                pinColor="#FF0000"
-                title={matchInfo.LocationName}
-                image={HoopSquadLogoPin}
-              />
-            </MapView>
+            <GoogleMap
+              Latitude={matchInfo.Lat}
+              Longitude={matchInfo.Lng}
+              openModal={openModal}
+              locationName={matchInfo.LocationName}
+            />
           )}
         </MatchInfoSection>
       </ScrollView>
@@ -291,11 +275,6 @@ const styles = StyleSheet.create({
   headerTitle: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  googleMap: {
-    width: "100%",
-    height: 200,
-    marginBottom: 80,
   },
   imageDot: {
     width: 6,
