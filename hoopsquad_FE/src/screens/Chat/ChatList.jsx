@@ -9,66 +9,24 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import NavigationBar from "../../components/NavigationBar";
-import ChatItem from "./components/ChatItem";
-import io from "socket.io-client";
-import { useContext, useEffect, useRef, useState } from "react";
+import ChatRoomItem from "./components/ChatRoomItem";
+import { useContext, useEffect } from "react";
 import Usercontext from "../../contexts/UserContext";
-import { REACT_APP_PROXY } from "@env";
+import SocketContext from "../../contexts/SocketContext";
 
 const ChatList = () => {
   const navigation = useNavigation();
-  const socketRef = useRef(null);
 
   const { user } = useContext(Usercontext);
-  const [chatRooms, setChatRooms] = useState(null);
-  const [imageUrl, setImageUrl] = useState(null);
-
-  socketRef.current = io(REACT_APP_PROXY);
+  const { socketRef, chatRooms, setChatRooms } = useContext(SocketContext);
 
   useEffect(() => {
     const userId = user.User_id;
-    socketRef.current.on("connect", () => {
 
-      socketRef.current.emit("joinAllRooms", userId, (chatRooms) => {
-        setChatRooms(chatRooms);
-      });
-
-      socketRef.current.on("send", (msgInfo) => addMessage(msgInfo));
-
-      socketRef.current.on("updateChat" /*,updatedChat(msgInfo)*/);
-
-      socketRef.current.on("getUserId", userId);
+    socketRef.current.emit("joinAllRooms", userId, (chatRooms) => {
+      setChatRooms(chatRooms);
     });
   }, []);
-
-  const makeRoom = () => {
-    const userId = user.User_id;
-    const guestId = 2;
-    const postingId = 1;
-    socketRef.current.emit("makeRoom", userId, guestId, postingId, (roomName) => {
-      roomName && console.log("roomName", roomName);
-    });
-  };
-
-  const enterRoom = () => {
-    socketRef.current.emit("enterRoom", "1_3", (chatList) => {
-      console.log(chatList);
-    });
-  };
-
-  const sendMessage = () => {
-    socketRef.current.emit("send", user.Name, user.User_id, "send_test", "1_2");
-  };
-
-  const addMessage = (msgInfo) => {
-    console.log(msgInfo);
-  };
-
-  const convertImageBufferToBlob = (imgBuffer) => {
-    const blob = new Blob([imgBuffer], { type: "image/png" });
-    const imageUrl = URL.createObjectURL(blob);
-    return imageUrl;
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -81,34 +39,13 @@ const ChatList = () => {
         </View>
       </View>
       <Text style={styles.userNickname}>{user.User_id}</Text>
-      <TouchableOpacity
-        style={styles.buttonStyle}
-        onPress={() => sendMessage()}
-      >
-        <Text style={styles.buttonText}>메시지 전송</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonStyle} onPress={() => makeRoom()}>
-        <Text style={styles.buttonText}>호스트가 요청을 수락 : 방 생성</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.buttonStyle} onPress={() => enterRoom()}>
-        <Text style={styles.buttonText}>채팅방 클릭 : 방 참가</Text>
-      </TouchableOpacity>
       <FlatList
         data={chatRooms}
-        keyExtractor={(item) => item.roomName}
+        keyExtractor={(item) => item.postingId}
         renderItem={({ item }) => (
-          <ChatItem
-            chatImg={item.image}
-            nickName={item.nickname}
-            chat={item.lastChatMessage}
-            chatTime={item.lastChatTime}
-            chatCount={item.unreadMessageAmount}
-          />
+          <ChatRoomItem item={item} socketRef={socketRef} />
         )}
       />
-      {imageUrl && (
-        <Image source={{ uri: imageUrl }} style={{ width: 100, height: 100 }} />
-      )}
       <NavigationBar />
     </SafeAreaView>
   );
