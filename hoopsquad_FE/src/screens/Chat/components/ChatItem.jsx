@@ -1,74 +1,53 @@
-import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { Text, View, StyleSheet, Image } from "react-native";
+import formatDate from "../../../utils/formatDate";
 
-const ChatItem = ({ chatImg, nickName, chat, chatTime, chatCount }) => {
-  const props = { chatImg, nickName, chat, chatTime, chatCount };
+const ChatItem = ({ chatInfo, isUserChat }) => {
+  const messageDirection = isUserChat ? "row-reverse" : "row";
+  const chatBackground = isUserChat ? "#F3A241" : "#F8F8F8";
+  const chatColor = isUserChat ? "#ffffff" : "black";
 
   return (
-    <TouchableOpacity style={styles.chat}>
-      <View style={styles.imgWrapper}>
-        <Image
-          resizeMode="contain"
-          source={require("../../../../assets/HoopSquadFullLogo.png")}
-          style={{ width: "100%", height: "100%" }}
-        />
+    <View style={[styles.chatContainer, isUserChat && styles.ownChatContainer]}>
+      <View
+        style={[styles.messageContainer, { flexDirection: messageDirection }]}
+      >
+        <Text
+          style={[
+            styles.chat,
+            { backgroundColor: chatBackground, color: chatColor },
+          ]}
+        >
+          {chatInfo.Msg}
+        </Text>
+        <Text style={styles.timeFont}>
+          {formatDate(chatInfo.ChatTime, true)}
+        </Text>
       </View>
-      <View style={styles.chatContent}>
-        <View style={styles.chatLayout}>
-          <Text style={styles.userNickname}>{nickName}</Text>
-          <Text style={styles.timeFont}>{chatTime}</Text>
-        </View>
-        <View style={styles.chatLayout}>
-          <Text>{chat}</Text>
-          <Text style={styles.chatCount}>{chatCount}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  chatLayout: {
+  chatContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-end",
+    marginBottom: 14,
+    paddingLeft: 10,
+  },
+  ownChatContainer: {
+    justifyContent: "flex-end",
+    paddingRight: 10,
+  },
+  messageContainer: {
+    alignItems: "flex-end",
   },
   chat: {
-    flexDirection: "row",
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderColor: "#E2E2E2",
-  },
-  imgWrapper: {
-    width: 80,
-    aspectRatio: 1 / 1,
-    borderRadius: 40,
-    overflow: "hidden",
-    justifyContent: "center",
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#E2E2E2",
-  },
-  chatContent: {
-    flex: 1,
-    justifyContent: "space-around",
-    marginLeft: 16,
-  },
-  userNickname: {
-    fontSize: 16,
-    fontWeight: "bold",
+    borderRadius: 10,
+    padding: 10,
   },
   timeFont: {
+    marginHorizontal: 10,
     fontSize: 10,
-  },
-  chatCount: {
-    color: "#ffffff",
-    backgroundColor: "#F3A241",
-    width: 20,
-    fontSize: 12,
-    aspectRatio: 1 / 1,
-    borderRadius: 40,
-    textAlign: "center",
   },
 });
 
