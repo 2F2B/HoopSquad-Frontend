@@ -1,12 +1,14 @@
-const formatDate = (writeDate) => {
+const formatDate = (writeDate, extractTime = false) => {
   const newDate = new Date(writeDate);
-  const options = {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-  };
+  const options = extractTime
+    ? { hour: "numeric", minute: "numeric" }
+    : {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+      };
 
   return newDate.toLocaleString("ko", options);
 };

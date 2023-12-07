@@ -14,6 +14,7 @@ import MatchDetail from "../screens/MatchDetail/MatchDetail";
 import ChatList from "../screens/Chat/ChatList";
 import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
+import ChatRoom from "../screens/Chat/ChatRoom";
 
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
@@ -59,26 +60,27 @@ const Navigation = () => {
           options={{ headerShown: false }}
         />
         <Stack.Screen name="KakaoLogin" component={KakaoLogin} />
-
         <Stack.Screen
           name="MatchRegister"
           component={MatchRegister}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen name="Signup" component={Signup} />
         <Stack.Screen
           name="MatchDetail"
           component={MatchDetail}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ChatList"
           component={ChatList}
           options={{ headerShown: false }}
         />
-
+        <Stack.Screen
+          name="ChatRoom"
+          component={ChatRoom}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Profile"
           component={Profile}
