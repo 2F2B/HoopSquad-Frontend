@@ -9,7 +9,7 @@ import KakaoLogin from "../screens/KakaoLogin";
 import Usercontext from "../contexts/UserContext";
 import { REACT_APP_PROXY } from "@env";
 import Matching from "../screens/Matching/Matching";
-import MatchRegister from "../screens/MatchRegister";
+import MatchRegister from "../screens/MatchRegister/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
 import ChatList from "../screens/Chat/ChatList";
 import Profile from "../screens/Profile/Profile";
