@@ -28,8 +28,10 @@ const NavigationBar = (props) => {
         ></Image>
         <Text>팀</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.navigationBox}>
+      <TouchableOpacity 
+        style={styles.navigationBox}
+        onPress={() => navigation.navigate("ChatList")}
+      >
         <Image
           source={Chat}
           resizeMode="contain"

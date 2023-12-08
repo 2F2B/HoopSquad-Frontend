@@ -38,7 +38,6 @@ const ChatList = () => {
           <Text style={styles.headerLeftChildText}>채팅</Text>
         </View>
       </View>
-      <Text style={styles.userNickname}>{user.User_id}</Text>
       <FlatList
         data={chatRooms}
         keyExtractor={(item) => item.postingId}
