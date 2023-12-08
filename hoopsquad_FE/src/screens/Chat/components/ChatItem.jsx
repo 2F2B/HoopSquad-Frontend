@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "flex-end",
     marginBottom: 14,
+    paddingTop : 5,
     paddingLeft: 10,
   },
   ownChatContainer: {
@@ -40,6 +41,7 @@ const styles = StyleSheet.create({
   },
   messageContainer: {
     alignItems: "flex-end",
+    maxWidth : 300,
   },
   chat: {
     borderRadius: 10,
