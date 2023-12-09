@@ -15,6 +15,7 @@ import ChatList from "../screens/Chat/ChatList";
 import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
 import ChatRoom from "../screens/Chat/ChatRoom";
+import GoogleMapPin from "../components/GoogleMapPin";
 
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
@@ -84,6 +85,11 @@ const Navigation = () => {
         <Stack.Screen
           name="Profile"
           component={Profile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="GoogleMapPin"
+          component={GoogleMapPin}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
