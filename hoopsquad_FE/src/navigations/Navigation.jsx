@@ -9,12 +9,13 @@ import KakaoLogin from "../screens/KakaoLogin";
 import Usercontext from "../contexts/UserContext";
 import { REACT_APP_PROXY } from "@env";
 import Matching from "../screens/Matching/Matching";
-import MatchRegister from "../screens/MatchRegister";
+import MatchRegister from "../screens/MatchRegister/MatchRegister";
 import MatchDetail from "../screens/MatchDetail/MatchDetail";
 import ChatList from "../screens/Chat/ChatList";
 import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
 import ChatRoom from "../screens/Chat/ChatRoom";
+import GoogleMapPin from "../components/GoogleMapPin";
 
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
@@ -84,6 +85,11 @@ const Navigation = () => {
         <Stack.Screen
           name="Profile"
           component={Profile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="GoogleMapPin"
+          component={GoogleMapPin}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
