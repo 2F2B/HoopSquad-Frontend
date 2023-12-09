@@ -171,13 +171,21 @@ const MatchDetail = ({ route }) => {
             })
           }
         >
-          <Image
-            resizeMode="cover"
-            source={{
-              uri: `${REACT_APP_PROXY}image/user/${matchInfo?.WriterImage.ImageData}`,
-            }}
-            style={[styles.imageSize, { opacity: openModal ? 0.3 : 1 }]}
-          ></Image>
+          {matchInfo?.WriterImage ? (
+            <Image
+              resizeMode="cover"
+              source={{
+                uri: `${REACT_APP_PROXY}image/user/${matchInfo?.WriterImage.ImageData}`,
+              }}
+              style={[styles.imageSize, { opacity: openModal ? 0.3 : 1 }]}
+            ></Image>
+          ) : (
+            <Image
+              resizeMode="cover"
+              source={HoopSquadFullLogo}
+              style={[styles.imageSize, { opacity: openModal ? 0.3 : 1 }]}
+            ></Image>
+          )}
         </TouchableOpacity>
         <View>
           <Text style={styles.titleText}>{matchInfo?.Title}</Text>
