@@ -72,7 +72,6 @@ const GoogleMapPin = () => {
 
   const changeLocationName = (location) => {
     setLocationName(location);
-    setAddress(location);
   };
 
   return (
@@ -201,7 +200,10 @@ const GoogleMapPin = () => {
               ></TextInput>
               <View>
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("MatchRegister")}
+                  onPress={() => {
+                    setAddress(locationName);
+                    navigation.navigate("MatchRegister");
+                  }}
                   style={styles.locationModalButton}
                 >
                   <Text style={styles.locationModalButtonText}>
