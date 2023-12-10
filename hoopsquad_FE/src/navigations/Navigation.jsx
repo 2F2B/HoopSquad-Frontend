@@ -15,6 +15,7 @@ import ChatList from "../screens/Chat/ChatList";
 import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
 import ChatRoom from "../screens/Chat/ChatRoom";
+import Notification from "../screens/Notification/Notification";
 import GoogleMapPin from "../components/GoogleMapPin";
 
 const Navigation = () => {
@@ -51,7 +52,11 @@ const Navigation = () => {
         screenOptions={{ contentStyle: { backgroundColor: "white" } }}
       >
         {user ? (
-          <Stack.Screen name="Main" component={Main} />
+          <Stack.Screen
+            name="Main"
+            component={Main}
+            options={{ headerShown: false }}
+          />
         ) : (
           <Stack.Screen name="Login" component={Login} />
         )}
@@ -85,6 +90,11 @@ const Navigation = () => {
         <Stack.Screen
           name="Profile"
           component={Profile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Notification"
+          component={Notification}
           options={{ headerShown: false }}
         />
         <Stack.Screen
