@@ -46,7 +46,6 @@ const MyProfile = ({ route }) => {
 
   useEffect(() => {
     getProfileInfo();
-    console.log("마이");
   }, [isFocused]);
 
   const getProfileInfo = async () => {
