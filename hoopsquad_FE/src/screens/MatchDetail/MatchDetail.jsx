@@ -166,9 +166,13 @@ const MatchDetail = ({ route }) => {
             { borderColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
           ]}
           onPress={() =>
-            navigation.navigate("Profile", {
-              profileId: matchInfo?.User_id,
-            })
+            matchInfo?.User_id === user.User_id
+              ? navigation.navigate("MyProfile", {
+                  profileId: matchInfo?.User_id,
+                })
+              : navigation.navigate("Profile", {
+                  profileId: matchInfo?.User_id,
+                })
           }
         >
           {matchInfo?.WriterImage ? (
