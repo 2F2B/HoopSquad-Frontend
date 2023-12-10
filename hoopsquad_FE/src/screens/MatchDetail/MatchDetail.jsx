@@ -21,6 +21,7 @@ import GameType from "../Matching/components/GameType";
 import Usercontext from "../../contexts/UserContext";
 import MatchDetailModal from "./components/MatchDetailModal";
 import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
+import SocketContext from "../../contexts/SocketContext";
 
 const MatchDetail = ({ route }) => {
   const navigation = useNavigation();
@@ -30,6 +31,7 @@ const MatchDetail = ({ route }) => {
   const [openModal, setOpenModal] = useState(false);
   const { user } = useContext(Usercontext);
   const screenWidth = Dimensions.get("window").width;
+  const { socketRef, setChatList } = useContext(SocketContext);
 
   useEffect(() => {
     getMatchDetailInfo();
@@ -38,7 +40,7 @@ const MatchDetail = ({ route }) => {
   const getMatchDetailInfo = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_PROXY}match/info?postingId=${postingId}&guestId=${user.User_id}`
+        `${REACT_APP_PROXY}match/info/?postingId=${postingId}&guestId=${user.User_id}`
       );
       setMatchInfo(response.data);
     } catch (error) {
@@ -50,6 +52,47 @@ const MatchDetail = ({ route }) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const index = Math.floor(contentOffsetX / Math.floor(screenWidth));
     setImageIndex(index);
+  };
+
+  const handleChatRoom = () => {
+    const roomId = matchInfo.roomId;
+    const userId = user.User_id;
+    const nickname = matchInfo.postWriterNickname;
+
+    if (roomId && userId) {
+      enterRoom(roomId, userId, nickname);
+    } else {
+      const opponentImage =
+        matchInfo?.Image.length > 0 ? matchInfo.Image[0].ImageData : null;
+      const hostId = matchInfo.User_id;
+      const guestId = user.User_id;
+      const postingId = matchInfo.Posting_id;
+
+      navigation.navigate("EmptyChatRoom", {
+        opponentImage,
+        hostId,
+        guestId,
+        postingId,
+        nickname,
+      });
+    }
+  };
+
+  const enterRoom = (roomId, userId, nickname) => {
+    socketRef.current.emit("enterRoom", roomId, userId, (chatInfo) => {
+      const chatList = chatInfo.chatList;
+      const opponentImage = chatInfo.opponentImageName;
+      setChatList((prevChatList) => ({
+        ...prevChatList,
+        [roomId]: chatList,
+      }));
+      navigation.navigate("ChatRoom", {
+        roomId,
+        postingId,
+        nickname,
+        opponentImage,
+      });
+    });
   };
 
   return (
@@ -86,14 +129,20 @@ const MatchDetail = ({ route }) => {
           <Text style={styles.headerLeftChildText}>매칭 상세</Text>
         </View>
         <View>
-          <TouchableOpacity onPress={() => setOpenModal(true)}>
+          <TouchableOpacity
+            onPress={
+              matchInfo?.User_id === user.User_id
+                ? () => setOpenModal(true)
+                : () => handleChatRoom()
+            }
+          >
             <Text
               style={[
                 styles.headerRightChildText,
                 { opacity: openModal ? 0.3 : 1 },
               ]}
             >
-              {matchInfo?.User_id === user.User_id ? "삭제" : "신청"}
+              {matchInfo?.User_id === user.User_id ? "삭제" : "채팅"}
             </Text>
           </TouchableOpacity>
         </View>
@@ -166,13 +215,9 @@ const MatchDetail = ({ route }) => {
             { borderColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
           ]}
           onPress={() =>
-            matchInfo?.User_id === user.User_id
-              ? navigation.navigate("MyProfile", {
-                  profileId: matchInfo?.User_id,
-                })
-              : navigation.navigate("Profile", {
-                  profileId: matchInfo?.User_id,
-                })
+            navigation.navigate("Profile", {
+              profileId: matchInfo?.User_id,
+            })
           }
         >
           {matchInfo?.WriterImage ? (
