@@ -41,13 +41,13 @@ const Matching = () => {
 
   useEffect(() => {
     getMatch(
-      `?all=true&Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=`
+      `?Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=`
     );
   }, [selectSort, isFocused]);
 
   const searchGameType = async () => {
     getMatch(
-      `?all=true&Sort=${selectSort}&Location=${activityLocation}&Filter=GameType&One=${gameTypeList.One}&Three=${gameTypeList.Three}&Five=${gameTypeList.Five}`
+      `?Sort=${selectSort}&Location=${activityLocation}&Filter=GameType&One=${gameTypeList.One}&Three=${gameTypeList.Three}&Five=${gameTypeList.Five}`
     );
   };
 
@@ -62,7 +62,7 @@ const Matching = () => {
 
   const searchTitle = async (text) => {
     getMatch(
-      `?all=true&Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=${text}`
+      `?Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=${text}`
     );
   };
 
