@@ -17,7 +17,7 @@ import Usercontext from "../../contexts/UserContext";
 import ChatItem from "./components/ChatItem";
 
 const ChatRoom = ({ route, navigation }) => {
-  const { postingId, postingTitle, image } = route.params;
+  const { roomId, postingId, nickname, image } = route.params;
   const { socketRef, chatList } = useContext(SocketContext);
   const { user } = useContext(Usercontext);
   const [message, setMessage] = useState("");
@@ -30,8 +30,17 @@ const ChatRoom = ({ route, navigation }) => {
   }, [chatList]);
 
   const handleSendMessage = () => {
-    socketRef.current.emit("send", user.Name, user.User_id, message, postingId);
-    setMessage("");
+    if (message) {
+      socketRef.current.emit(
+        "send",
+        user.Name,
+        user.User_id,
+        message,
+        postingId,
+        roomId
+      );
+      setMessage("");
+    }
   };
 
   const checkOwnChat = (userId) => {
@@ -53,19 +62,19 @@ const ChatRoom = ({ route, navigation }) => {
             <Image
               resizeMode="cover"
               source={{
-                uri: `${REACT_APP_PROXY}image/match/${image}`,
+                uri: `${REACT_APP_PROXY}image/user/${image}`,
               }}
               style={{ width: "100%", height: "100%" }}
             />
           </View>
-          <Text style={styles.headerLeftChildText}>{postingTitle}</Text>
+          <Text style={styles.headerLeftChildText}>{nickname}</Text>
         </View>
       </View>
 
       <FlatList
         ref={flatListRef}
         style={styles.chatContent}
-        data={chatList[postingId]}
+        data={chatList[roomId]}
         keyExtractor={(item) => item.Message_id}
         renderItem={({ item }) => (
           <ChatItem chatInfo={item} isUserChat={checkOwnChat(item.User_id)} />
@@ -74,6 +83,7 @@ const ChatRoom = ({ route, navigation }) => {
           flatListRef.current.scrollToEnd({ animated: true });
         }}
         onLayout={onLayoutHandler}
+        extraData={chatList[roomId]}
       />
 
       <View style={styles.inputContainer}>

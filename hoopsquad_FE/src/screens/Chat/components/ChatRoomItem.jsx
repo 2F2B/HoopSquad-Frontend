@@ -10,23 +10,25 @@ const ChatRoomItem = ({ item, socketRef }) => {
     image,
     lastChatMessage,
     lastChatTime,
-    nickName,
+    nickname,
     postingId,
     postingTitle,
+    roomId,
   } = item;
 
   const navigation = useNavigation();
   const { setChatList } = useContext(SocketContext);
 
   const enterRoom = () => {
-    socketRef.current.emit("enterRoom", postingId, (chatList) => {
+    socketRef.current.emit("enterRoom", roomId, (chatList) => {
       setChatList((prevChatList) => ({
         ...prevChatList,
-        [postingId]: chatList,
+        [roomId]: chatList,
       }));
       navigation.navigate("ChatRoom", {
+        roomId,
         postingId,
-        postingTitle,
+        nickname,
         image,
       });
     });
@@ -43,14 +45,14 @@ const ChatRoomItem = ({ item, socketRef }) => {
         <Image
           resizeMode="cover"
           source={{
-            uri: `${REACT_APP_PROXY}image/match/${image}`,
+            uri: `${REACT_APP_PROXY}image/user/${image}`,
           }}
           style={{ width: "100%", height: "100%" }}
         />
       </View>
       <View style={styles.chatContent}>
         <View style={styles.chatLayout}>
-          <Text style={styles.userNickname}>{postingTitle}</Text>
+          <Text style={styles.userNickname}>{nickname}</Text>
           <Text style={styles.timeFont}>{formatDate(lastChatTime, true)}</Text>
         </View>
         <View style={styles.chatLayout}>
