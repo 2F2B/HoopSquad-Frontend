@@ -2,6 +2,7 @@ import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { REACT_APP_PROXY } from "@env";
 import { useNavigation } from "@react-navigation/native";
 import SocketContext from "../../../contexts/SocketContext";
+import Usercontext from "../../../contexts/UserContext";
 import formatDate from "../../../utils/formatDate";
 import { useContext } from "react";
 
@@ -18,9 +19,19 @@ const ChatRoomItem = ({ item, socketRef }) => {
 
   const navigation = useNavigation();
   const { setChatList } = useContext(SocketContext);
+  const { user } = useContext(Usercontext);
 
-  const enterRoom = () => {
-    socketRef.current.emit("enterRoom", roomId, (chatList) => {
+  const handleEnterRoom = () => {
+    const userId = user.User_id;
+    if (userId) {
+      enterRoom(roomId, userId);
+    }
+  };
+
+  const enterRoom = (roomId, userId) => {
+    socketRef.current.emit("enterRoom", roomId, userId, (chatInfo) => {
+      const chatList = chatInfo.chatList;
+      const opponentImage = chatInfo.opponentImageName;
       setChatList((prevChatList) => ({
         ...prevChatList,
         [roomId]: chatList,
@@ -29,7 +40,7 @@ const ChatRoomItem = ({ item, socketRef }) => {
         roomId,
         postingId,
         nickname,
-        image,
+        opponentImage,
       });
     });
   };
@@ -38,7 +49,7 @@ const ChatRoomItem = ({ item, socketRef }) => {
     <TouchableOpacity
       style={styles.chat}
       onPress={() => {
-        enterRoom();
+        handleEnterRoom();
       }}
     >
       <View style={styles.imgWrapper}>
