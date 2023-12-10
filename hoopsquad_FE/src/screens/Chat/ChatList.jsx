@@ -40,7 +40,7 @@ const ChatList = () => {
       </View>
       <FlatList
         data={chatRooms}
-        keyExtractor={(item) => item.postingId}
+        keyExtractor={(item) => item.roomId}
         renderItem={({ item }) => (
           <ChatRoomItem item={item} socketRef={socketRef} />
         )}
