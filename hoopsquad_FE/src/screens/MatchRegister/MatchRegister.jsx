@@ -345,7 +345,9 @@ const MatchRegister = () => {
                       setSelectHour(
                         selectTime.getHours().toString().padStart(2, "0")
                       );
-                      setSelectMinute(selectTime.getMinutes());
+                      setSelectMinute(
+                        selectTime.getMinutes().toString().padStart(2, "0")
+                      );
                       setTimeModalOpen(false);
                     }}
                     onCancel={() => setTimeModalOpen(false)}
