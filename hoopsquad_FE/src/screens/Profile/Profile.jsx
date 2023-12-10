@@ -16,6 +16,7 @@ import { StatusBar } from "expo-status-bar";
 import { REACT_APP_PROXY } from "@env";
 import { Feather } from "@expo/vector-icons";
 import Usercontext from "../../contexts/UserContext";
+import { useIsFocused } from "@react-navigation/native";
 import ProfileInfo from "./components/ProfileInfo";
 import HoopScoreModal from "./components/HoopScoreModal";
 import NavigationBar from "../../components/NavigationBar";
@@ -39,11 +40,13 @@ const Profile = ({ route }) => {
   const { profileId } = route.params;
   const rankName = ["루키", "아마추어", "프로", "슈퍼스타"];
   const rankImage = [Rank_Rookie, Rank_Amateur, Rank_Pro, Rank_Superstar];
-
+  const isFocused = useIsFocused();
+  // 후기 테스트를 위한 배열
   const test = [1, 2];
+
   useEffect(() => {
     getProfileInfo();
-  }, []);
+  }, [isFocused]);
 
   const getProfileInfo = async () => {
     try {
@@ -101,18 +104,6 @@ const Profile = ({ route }) => {
           </TouchableOpacity>
           <Text style={styles.headerLeftChildText}>프로필</Text>
         </View>
-        <View>
-          <TouchableOpacity>
-            <Text
-              style={[
-                styles.headerRightChildText,
-                { opacity: hoopScoreModal ? 0.3 : 1 },
-              ]}
-            >
-              {profileInfo?.User_id === user.User_id ? "수정" : ""}
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
 
       {/* 세부 내용 */}
@@ -120,20 +111,32 @@ const Profile = ({ route }) => {
         {/* 프로필 */}
         <View style={styles.profileUserWrapper}>
           <View style={styles.profileImageWrapper}>
-            <Image
-              resizeMode="cover"
-              source={{
-                uri: `${REACT_APP_PROXY}image/user/${profileInfo?.Image.ImageData}`,
-              }}
-              style={{ width: "100%", height: "100%" }}
-            ></Image>
+            {profileInfo?.Image.length > 0 ? (
+              <Image
+                resizeMode="cover"
+                source={{
+                  uri: `${REACT_APP_PROXY}image/user/${profileInfo?.Image[0].ImageData}`,
+                }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <Image
+                resizeMode="cover"
+                source={HoopSquadFullLogo}
+                style={{ width: "100%", height: "100%" }}
+              />
+            )}
           </View>
           <View>
-            <Text style={styles.profileUserName}>{profileInfo?.Name}</Text>
+            <Text style={styles.profileUserName}>
+              {profileInfo?.Name != null ? `${profileInfo?.Name}` : ""}
+            </Text>
           </View>
           <View>
             <Text style={styles.profileUserIntroduce}>
-              {profileInfo?.Introduce}
+              {profileInfo?.Introduce != null
+                ? `${profileInfo?.Introduce}`
+                : ""}
             </Text>
           </View>
         </View>
@@ -173,11 +176,9 @@ const Profile = ({ route }) => {
                     }
                   </Text>
                   <Text style={{ fontSize: 8, color: "#666666" }}>
-                    {Math.floor(profileInfo?.Overall / 100) < 3
-                      ? `( ${profileInfo?.Overall} / ${
-                          (Math.floor(profileInfo?.Overall / 100) + 1) * 100
-                        } )`
-                      : `( ${profileInfo?.Overall} )`}
+                    {Math.floor(profileInfo?.Overall / 100) < 4
+                      ? `( ${profileInfo?.Overall % 100} / 100 )`
+                      : `( 100 / 100 )`}
                   </Text>
                 </View>
                 {Math.floor(profileInfo?.Overall / 100) < 3 && (
@@ -246,13 +247,21 @@ const Profile = ({ route }) => {
                     },
                   ]}
                 >
-                  <Image
-                    resizeMode="cover"
-                    source={{
-                      uri: `${REACT_APP_PROXY}image/team/${profileInfo.Team[0].TeamImage}`,
-                    }}
-                    style={{ width: "100%", height: "100%" }}
-                  ></Image>
+                  {profileInfo?.Team[0].TeamImage > 0 ? (
+                    <Image
+                      resizeMode="cover"
+                      source={{
+                        uri: `${REACT_APP_PROXY}image/team/${profileInfo.Team[0].TeamImage}`,
+                      }}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  ) : (
+                    <Image
+                      resizeMode="cover"
+                      source={HoopSquadFullLogo}
+                      style={{ width: "100%", height: "100%" }}
+                    />
+                  )}
                 </View>
                 <View>
                   <Text style={styles.teamName}>
@@ -419,7 +428,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 10,
+    paddingLeft: 10,
+    paddingRight: 20,
+    paddingVertical: 10,
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 0.5,
