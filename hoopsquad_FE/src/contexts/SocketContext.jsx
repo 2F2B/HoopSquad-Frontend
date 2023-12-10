@@ -13,17 +13,17 @@ export const SocketProvider = ({ children }) => {
     socketRef.current = io(REACT_APP_PROXY);
 
     socketRef.current.on("send", (message) => {
-      const postingId = message.Posting_id;
+      const roomId = message.roomId;
       setChatList((prevChatList) => ({
         ...prevChatList,
-        [postingId]: [...(prevChatList[postingId] || []), message],
+        [roomId]: [...(prevChatList[roomId] || []), message],
       }));
     });
 
     socketRef.current.on("updateChatRoom", (updatedChatroom) => {
       setChatRooms((prevChatRooms) => {
         return prevChatRooms.map((room) => {
-          if (room.postingId === updatedChatroom.postingId) {
+          if (room.roomId === updatedChatroom.roomId) {
             return { ...room, ...updatedChatroom };
           }
           return room;

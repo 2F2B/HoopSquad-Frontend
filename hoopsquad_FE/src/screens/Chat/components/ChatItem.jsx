@@ -1,31 +1,37 @@
-import { Text, View, StyleSheet, Image } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
+import { PureComponent } from "react";
 import formatDate from "../../../utils/formatDate";
 
-const ChatItem = ({ chatInfo, isUserChat }) => {
-  const messageDirection = isUserChat ? "row-reverse" : "row";
-  const chatBackground = isUserChat ? "#F3A241" : "#F8F8F8";
-  const chatColor = isUserChat ? "#ffffff" : "black";
+class ChatItem extends PureComponent {
+  render() {
+    const { chatInfo, isUserChat } = this.props;
+    const messageDirection = isUserChat ? "row-reverse" : "row";
+    const chatBackground = isUserChat ? "#F3A241" : "#F8F8F8";
+    const chatColor = isUserChat ? "#ffffff" : "black";
 
-  return (
-    <View style={[styles.chatContainer, isUserChat && styles.ownChatContainer]}>
+    return (
       <View
-        style={[styles.messageContainer, { flexDirection: messageDirection }]}
+        style={[styles.chatContainer, isUserChat && styles.ownChatContainer]}
       >
-        <Text
-          style={[
-            styles.chat,
-            { backgroundColor: chatBackground, color: chatColor },
-          ]}
+        <View
+          style={[styles.messageContainer, { flexDirection: messageDirection }]}
         >
-          {chatInfo.Msg}
-        </Text>
-        <Text style={styles.timeFont}>
-          {formatDate(chatInfo.ChatTime, true)}
-        </Text>
+          <Text
+            style={[
+              styles.chat,
+              { backgroundColor: chatBackground, color: chatColor },
+            ]}
+          >
+            {chatInfo.Msg}
+          </Text>
+          <Text style={styles.timeFont}>
+            {formatDate(chatInfo.ChatTime, true)}
+          </Text>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   chatContainer: {
