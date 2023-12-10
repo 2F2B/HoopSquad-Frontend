@@ -1,37 +1,38 @@
-import { useState, useContext, useEffect, useRef } from "react";
+import { useState, useContext } from "react";
 import {
   Text,
   View,
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  FlatList,
   Image,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { REACT_APP_PROXY } from "@env";
-import SocketContext from "../../contexts/SocketContext";
-import Usercontext from "../../contexts/UserContext";
-import ChatItem from "./components/ChatItem";
-import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
+import { useNavigation } from "@react-navigation/native";
+import HoopSquadFullLogo from "../../../../assets/HoopSquadFullLogo.png";
+import SocketContext from "../../../contexts/SocketContext";
+import Usercontext from "../../../contexts/UserContext";
 
-const ChatRoom = ({ route, navigation }) => {
-  const { roomId, postingId, nickname, opponentImage } = route.params;
-  const { socketRef, chatList } = useContext(SocketContext);
+const EmptyChatRoom = ({ route }) => {
+  const { opponentImage, hostId, guestId, postingId, nickname } = route.params;
+
+  const navigation = useNavigation();
+  const { socketRef } = useContext(SocketContext);
   const { user } = useContext(Usercontext);
   const [message, setMessage] = useState("");
-  const flatListRef = useRef(null);
-
-  useEffect(() => {
-    if (flatListRef && flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [chatList]);
 
   const handleSendMessage = () => {
     if (message) {
+      makeRoom();
+      setMessage("");
+    }
+  };
+
+  const makeRoom = () => {
+    socketRef.current.emit("makeRoom", hostId, guestId, postingId, (roomId) => {
       socketRef.current.emit(
         "send",
         user.Name,
@@ -40,16 +41,13 @@ const ChatRoom = ({ route, navigation }) => {
         postingId,
         roomId
       );
-      setMessage("");
-    }
-  };
-
-  const checkOwnChat = (userId) => {
-    return user.User_id === userId;
-  };
-
-  const onLayoutHandler = () => {
-    flatListRef.current.scrollToEnd({ animated: false });
+      navigation.replace("ChatRoom", {
+        roomId,
+        postingId,
+        nickname,
+        opponentImage,
+      });
+    });
   };
 
   return (
@@ -79,22 +77,7 @@ const ChatRoom = ({ route, navigation }) => {
           <Text style={styles.headerLeftChildText}>{nickname}</Text>
         </View>
       </View>
-
-      <FlatList
-        ref={flatListRef}
-        style={styles.chatContent}
-        data={chatList[roomId]}
-        keyExtractor={(item) => item.Message_id}
-        renderItem={({ item }) => (
-          <ChatItem chatInfo={item} isUserChat={checkOwnChat(item.User_id)} />
-        )}
-        onContentSizeChange={() => {
-          flatListRef.current.scrollToEnd({ animated: true });
-        }}
-        onLayout={onLayoutHandler}
-        extraData={chatList[roomId]}
-      />
-
+      <View style={styles.chatContent}></View>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -162,4 +145,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChatRoom;
+export default EmptyChatRoom;

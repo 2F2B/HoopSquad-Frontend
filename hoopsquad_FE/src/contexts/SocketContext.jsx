@@ -15,19 +15,23 @@ export const SocketProvider = ({ children }) => {
     socketRef.current.on("send", (message) => {
       const roomId = message.roomId;
       setChatList((prevChatList) => ({
-        ...prevChatList,
-        [roomId]: [...(prevChatList[roomId] || []), message],
+        ...(prevChatList || {}),
+        [roomId]: [...(prevChatList?.[roomId] || []), message],
       }));
     });
 
     socketRef.current.on("updateChatRoom", (updatedChatroom) => {
       setChatRooms((prevChatRooms) => {
-        return prevChatRooms.map((room) => {
-          if (room.roomId === updatedChatroom.roomId) {
-            return { ...room, ...updatedChatroom };
-          }
-          return room;
-        });
+        if (prevChatRooms === null) {
+          return [updatedChatroom];
+        } else {
+          return prevChatRooms.map((room) => {
+            if (room.roomId === updatedChatroom.roomId) {
+              return { ...room, ...updatedChatroom };
+            }
+            return room;
+          });
+        }
       });
     });
 

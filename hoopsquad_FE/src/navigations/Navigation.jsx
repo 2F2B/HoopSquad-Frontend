@@ -15,6 +15,7 @@ import ChatList from "../screens/Chat/ChatList";
 import Profile from "../screens/Profile/Profile";
 import authApi from "../apis/authApi";
 import ChatRoom from "../screens/Chat/ChatRoom";
+import EmptyChatRoom from "../screens/Chat/components/EmptyChatRoom";
 import Notification from "../screens/Notification/Notification";
 import GoogleMapPin from "../components/GoogleMapPin";
 import ProfileRegister from "../screens/ProfileRegister/ProfileRegister";
@@ -87,6 +88,11 @@ const Navigation = () => {
         <Stack.Screen
           name="ChatRoom"
           component={ChatRoom}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="EmptyChatRoom"
+          component={EmptyChatRoom}
           options={{ headerShown: false }}
         />
         <Stack.Screen
