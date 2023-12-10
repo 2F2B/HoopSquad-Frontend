@@ -17,6 +17,8 @@ import authApi from "../apis/authApi";
 import ChatRoom from "../screens/Chat/ChatRoom";
 import Notification from "../screens/Notification/Notification";
 import GoogleMapPin from "../components/GoogleMapPin";
+import ProfileRegister from "../screens/ProfileRegister/ProfileRegister";
+import MyProfile from "../screens/Profile/MyProfile";
 
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
@@ -100,6 +102,16 @@ const Navigation = () => {
         <Stack.Screen
           name="GoogleMapPin"
           component={GoogleMapPin}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ProfileRegister"
+          component={ProfileRegister}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="MyProfile"
+          component={MyProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

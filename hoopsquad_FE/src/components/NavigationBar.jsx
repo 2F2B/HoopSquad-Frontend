@@ -28,7 +28,7 @@ const NavigationBar = (props) => {
         ></Image>
         <Text>팀</Text>
       </TouchableOpacity>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.navigationBox}
         onPress={() => navigation.navigate("ChatList")}
       >
@@ -61,7 +61,7 @@ const NavigationBar = (props) => {
       <TouchableOpacity
         style={styles.navigationBox}
         onPress={() =>
-          navigation.navigate("Profile", { profileId: user.User_id })
+          navigation.navigate("MyProfile", { profileId: user.User_id })
         }
       >
         <Image

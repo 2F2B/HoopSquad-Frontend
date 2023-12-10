@@ -31,7 +31,7 @@ import profile_Location from "../../../assets/profile_Location.png";
 import profile_GameType from "../../../assets/profile_GameType.png";
 import profile_Year from "../../../assets/profile_Year.png";
 
-const Profile = ({ route }) => {
+const MyProfile = ({ route }) => {
   const navigation = useNavigation();
   const [profileInfo, setProfileInfo] = useState();
   const [hoopScoreModal, setHoopScoreModal] = useState(false);
@@ -103,6 +103,23 @@ const Profile = ({ route }) => {
             />
           </TouchableOpacity>
           <Text style={styles.headerLeftChildText}>프로필</Text>
+        </View>
+        <View>
+          <TouchableOpacity
+            onPress={() =>
+              profileInfo?.User_id === user.User_id &&
+              navigation.navigate("ProfileRegister")
+            }
+          >
+            <Text
+              style={[
+                styles.headerRightChildText,
+                { opacity: hoopScoreModal ? 0.3 : 1 },
+              ]}
+            >
+              수정
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -568,4 +585,4 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
 });
-export default Profile;
+export default MyProfile;

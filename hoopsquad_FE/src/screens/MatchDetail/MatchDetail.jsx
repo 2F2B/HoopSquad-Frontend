@@ -38,7 +38,7 @@ const MatchDetail = ({ route }) => {
   const getMatchDetailInfo = async () => {
     try {
       const response = await axios.get(
-        `${REACT_APP_PROXY}match/?info=true&Posting_id=${postingId}`
+        `${REACT_APP_PROXY}match/info?postingId=${postingId}&guestId=${user.User_id}`
       );
       setMatchInfo(response.data);
     } catch (error) {
@@ -166,9 +166,13 @@ const MatchDetail = ({ route }) => {
             { borderColor: openModal ? "rgba(0, 0, 0, 0.1)" : "#E2E2E2" },
           ]}
           onPress={() =>
-            navigation.navigate("Profile", {
-              profileId: matchInfo?.User_id,
-            })
+            matchInfo?.User_id === user.User_id
+              ? navigation.navigate("MyProfile", {
+                  profileId: matchInfo?.User_id,
+                })
+              : navigation.navigate("Profile", {
+                  profileId: matchInfo?.User_id,
+                })
           }
         >
           {matchInfo?.WriterImage ? (
