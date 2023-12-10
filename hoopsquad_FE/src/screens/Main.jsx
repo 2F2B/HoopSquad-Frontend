@@ -24,7 +24,7 @@ const Main = () => {
         `${REACT_APP_PROXY}notification/registerPushToken`,
         {
           userId: user.User_id,
-          token: expoPushToken,
+          token: expoPushToken.data,
         }
       );
     } catch (error) {
