@@ -15,9 +15,10 @@ import { REACT_APP_PROXY } from "@env";
 import SocketContext from "../../contexts/SocketContext";
 import Usercontext from "../../contexts/UserContext";
 import ChatItem from "./components/ChatItem";
+import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
 
 const ChatRoom = ({ route, navigation }) => {
-  const { roomId, postingId, nickname, image } = route.params;
+  const { roomId, postingId, nickname, opponentImage } = route.params;
   const { socketRef, chatList } = useContext(SocketContext);
   const { user } = useContext(Usercontext);
   const [message, setMessage] = useState("");
@@ -59,13 +60,21 @@ const ChatRoom = ({ route, navigation }) => {
             <Ionicons name="chevron-back" size={30} color="black" />
           </TouchableOpacity>
           <View style={styles.imgWrapper}>
-            <Image
-              resizeMode="cover"
-              source={{
-                uri: `${REACT_APP_PROXY}image/user/${image}`,
-              }}
-              style={{ width: "100%", height: "100%" }}
-            />
+            {opponentImage ? (
+              <Image
+                resizeMode="cover"
+                source={{
+                  uri: `${REACT_APP_PROXY}image/user/${opponentImage}`,
+                }}
+                style={{ width: "100%", height: "100%" }}
+              />
+            ) : (
+              <Image
+                resizeMode="cover"
+                source={HoopSquadFullLogo}
+                style={{ width: "100%", height: "100%" }}
+              />
+            )}
           </View>
           <Text style={styles.headerLeftChildText}>{nickname}</Text>
         </View>
