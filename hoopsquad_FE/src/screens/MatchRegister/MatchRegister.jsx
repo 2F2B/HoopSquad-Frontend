@@ -7,17 +7,17 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Image,
-  Modal,
+  Animated,
+  Dimensions,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useState, useRef, useContext } from "react";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { StatusBar } from "expo-status-bar";
 import { Calendar, LocaleConfig } from "react-native-calendars";
 import * as ImagePicker from "expo-image-picker";
-import Postcode from "@actbase/react-daum-postcode";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { REACT_APP_PROXY } from "@env";
 import {
@@ -27,7 +27,10 @@ import {
   Entypo,
   Feather,
 } from "@expo/vector-icons";
-import NavigationBar from "../components/NavigationBar";
+import NavigationBar from "../../components/NavigationBar";
+import InputAlert from "../../components/InputAlert";
+import { alertUpward } from "../../components/InputAlert";
+import Locationcontext from "../../contexts/LocationContext";
 
 LocaleConfig.locales["ko"] = {
   monthNames: [
@@ -84,15 +87,16 @@ const MatchRegister = () => {
     Three: false,
     Five: false,
   });
-  const [address, setAddress] = useState("장소를 선택해주세요");
-  const [addressModalOpen, setAddressModalOpen] = useState(false);
   const [imageUrl, setImageUrl] = useState([]);
   const [title, setTitle] = useState("");
   const [currentAmount, setCurrentAmount] = useState("");
   const [recruitAmount, setRecruitAmount] = useState("");
   const [matchIntroduce, setMatchIntroduce] = useState("");
+  const { address, location, setAddress } = useContext(Locationcontext);
   const [status, requestPermission] = ImagePicker.useMediaLibraryPermissions();
   const formData = new FormData();
+  const { height } = Dimensions.get("window");
+  const translateY = useRef(new Animated.Value(height)).current;
 
   const changeTitle = (title) => {
     setTitle(title);
@@ -157,12 +161,13 @@ const MatchRegister = () => {
       });
     });
 
-    formData.append("data[Address]", address);
+    formData.append("data[Lat]", String(location.latitude));
+    formData.append("data[Lng]", String(location.longitude));
     formData.append("data[CurrentAmount]", String(currentAmount));
     formData.append("data[Five]", String(gameTypeList.Five));
     formData.append("data[Introduce]", matchIntroduce);
     formData.append("data[IsTeam]", String(false));
-    formData.append("data[LocationName]", "여기요");
+    formData.append("data[LocationName]", address);
     formData.append("data[One]", String(gameTypeList.One));
     formData.append(
       "data[PlayTime]",
@@ -174,19 +179,51 @@ const MatchRegister = () => {
   };
 
   const registerMatch = async () => {
-    getFormData();
-    const accessToken = await AsyncStorage.getItem("accessToken");
-    try {
-      await axios.post(`${REACT_APP_PROXY}match`, formData, {
-        headers: {
-          authorization: `Bearer ${accessToken}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      navigation.navigate("Match");
-    } catch (error) {
-      console.log(error);
+    if (isFormValid()) {
+      getFormData();
+      const accessToken = await AsyncStorage.getItem("accessToken");
+      try {
+        await axios.post(`${REACT_APP_PROXY}match`, formData, {
+          headers: {
+            authorization: `Bearer ${accessToken}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        navigation.navigate("Match");
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      alertUpward(translateY, height);
     }
+  };
+
+  const isFormValid = () => {
+    if (!title.trim()) {
+      return false;
+    }
+
+    if (selectDate === "일자를 선택해주세요") {
+      return false;
+    }
+
+    if (selectHour === "" || selectMinute === "") {
+      return false;
+    }
+
+    if (!gameTypeList.One && !gameTypeList.Three && !gameTypeList.Five) {
+      return false;
+    }
+
+    if (!currentAmount.trim() || !recruitAmount.trim()) {
+      return false;
+    }
+
+    if (address === "장소를 선택해주세요") {
+      return false;
+    }
+
+    return true;
   };
 
   return (
@@ -199,7 +236,12 @@ const MatchRegister = () => {
         <StatusBar style="dark" />
         <View style={styles.header}>
           <View style={styles.headerTextWrapper}>
-            <TouchableOpacity onPress={() => navigation.navigate("Match")}>
+            <TouchableOpacity
+              onPress={() => {
+                setAddress("장소를 선택해주세요");
+                navigation.navigate("Match");
+              }}
+            >
               <Ionicons
                 name="chevron-back"
                 size={30}
@@ -232,7 +274,7 @@ const MatchRegister = () => {
                 style={styles.textInputTitle}
                 placeholderTextColor="#8F8F8F"
                 onChangeText={changeTitle}
-              ></TextInput>
+              />
             </View>
             <View style={{ marginBottom: 20 }}>
               <View style={{ flexDirection: "row" }}>
@@ -300,7 +342,9 @@ const MatchRegister = () => {
                     isVisible={timeModalOpen}
                     mode="time"
                     onConfirm={(selectTime) => {
-                      setSelectHour(selectTime.getHours());
+                      setSelectHour(
+                        selectTime.getHours().toString().padStart(2, "0")
+                      );
                       setSelectMinute(selectTime.getMinutes());
                       setTimeModalOpen(false);
                     }}
@@ -397,34 +441,9 @@ const MatchRegister = () => {
                   style={styles.essentialIcon}
                 />
               </View>
-              {addressModalOpen && (
-                <Modal>
-                  <View style={styles.header}>
-                    <View style={styles.headerTextWrapper}>
-                      <TouchableOpacity
-                        onPress={() => setAddressModalOpen(false)}
-                      >
-                        <Ionicons
-                          name="chevron-back"
-                          size={30}
-                          color="black"
-                          style={{ marginTop: 5 }}
-                        />
-                      </TouchableOpacity>
-                      <Text style={styles.headerText}>주소 등록</Text>
-                    </View>
-                  </View>
-                  <Postcode
-                    style={{ width: "100%", height: "100%" }}
-                    jsOptions={{ animation: true, hideMapBtn: true }}
-                    onSelected={(data) => {
-                      setAddress(data.address);
-                      setAddressModalOpen(false);
-                    }}
-                  />
-                </Modal>
-              )}
-              <TouchableOpacity onPress={() => setAddressModalOpen(true)}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("GoogleMapPin")}
+              >
                 <View style={[styles.selectPlace, styles.inputText]}>
                   <Text
                     style={{
@@ -482,6 +501,7 @@ const MatchRegister = () => {
           </View>
         </ScrollView>
         <NavigationBar />
+        <InputAlert translateY={translateY} />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );
