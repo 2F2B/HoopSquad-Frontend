@@ -6,7 +6,6 @@ import Team from "../../assets/Team.png";
 import Chat from "../../assets/Chat.png";
 import Matching from "../../assets/Matching.png";
 import BasketBallCourt from "../../assets/BasketBallCourt.png";
-import Profile from "../../assets/Profile.png";
 import Main from "../../assets/Main.png";
 
 const NavigationBar = (props) => {
@@ -21,7 +20,10 @@ const NavigationBar = (props) => {
         { backgroundColor: props.opacity ? "#878787" : "#ffffff" },
       ]}
     >
-      <TouchableOpacity style={styles.navigationBox}>
+      <TouchableOpacity
+        style={styles.navigationBox}
+        onPress={() => navigation.navigate("Team")}
+      >
         <Image
           source={Team}
           resizeMode="contain"
