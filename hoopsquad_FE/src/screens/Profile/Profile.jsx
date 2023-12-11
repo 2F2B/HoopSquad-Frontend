@@ -320,9 +320,11 @@ const Profile = ({ route }) => {
             <ProfileInfo
               Image={profile_Location}
               Title={"활동 지역"}
-              Text={
-                profileInfo?.Location != null ? `${profileInfo?.Location}` : ""
-              }
+              Text={`${
+                profileInfo?.Location1 != null
+                  ? `${profileInfo?.Location1.location} ${profileInfo?.Location1.City}`
+                  : ""
+              }`}
               showUnderline={true}
               opacity={hoopScoreModal}
             />
