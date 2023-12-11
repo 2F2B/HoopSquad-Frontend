@@ -341,6 +341,10 @@ const MyProfile = ({ route }) => {
                 profileInfo?.Location1 != null
                   ? `${profileInfo?.Location1.location} ${profileInfo?.Location1.City}`
                   : ""
+              } ${
+                profileInfo?.Location2 != null
+                  ? `/ ${profileInfo?.Location2.location} ${profileInfo?.Location2.City}`
+                  : ""
               }`}
               showUnderline={true}
               opacity={hoopScoreModal}
