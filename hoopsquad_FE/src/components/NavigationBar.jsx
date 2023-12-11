@@ -7,6 +7,7 @@ import Chat from "../../assets/Chat.png";
 import Matching from "../../assets/Matching.png";
 import BasketBallCourt from "../../assets/BasketBallCourt.png";
 import Profile from "../../assets/Profile.png";
+import Main from "../../assets/Main.png";
 
 const NavigationBar = (props) => {
   const navigation = useNavigation();
@@ -39,6 +40,19 @@ const NavigationBar = (props) => {
         ></Image>
         <Text>채팅</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity
+        style={styles.navigationBox}
+        onPress={() => navigation.navigate("Main")}
+      >
+        <Image
+          source={Main}
+          resizeMode="contain"
+          style={styles.navigationImg}
+        ></Image>
+        <Text>메인</Text>
+      </TouchableOpacity>
+
       <TouchableOpacity
         style={styles.navigationBox}
         onPress={() => navigation.navigate("Match")}
@@ -50,6 +64,7 @@ const NavigationBar = (props) => {
         ></Image>
         <Text>매칭</Text>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.navigationBox}>
         <Image
           source={BasketBallCourt}
@@ -57,19 +72,6 @@ const NavigationBar = (props) => {
           style={styles.navigationImg}
         ></Image>
         <Text>농구장</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.navigationBox}
-        onPress={() =>
-          navigation.navigate("MyProfile", { profileId: user.User_id })
-        }
-      >
-        <Image
-          source={Profile}
-          resizeMode="contain"
-          style={styles.navigationImg}
-        ></Image>
-        <Text>프로필</Text>
       </TouchableOpacity>
     </View>
   );

@@ -31,8 +31,18 @@ const Match = (props) => {
   }, [writeDate]);
 
   return (
-    <View style={styles.matchContainer}>
-      <View style={styles.matchImageWrapper}>
+    <View
+      style={[
+        styles.matchContainer,
+        props.opacity && { borderColor: "rgba(0, 0, 0, 0.1)" },
+      ]}
+    >
+      <View
+        style={[
+          styles.matchImageWrapper,
+          props.opacity && { borderColor: "rgba(0, 0, 0, 0.1)" },
+        ]}
+      >
         <Image
           resizeMode="cover"
           source={
@@ -40,13 +50,13 @@ const Match = (props) => {
               ? { uri: `${REACT_APP_PROXY}image/match/${Images.ImageData}` }
               : HoopSquadFullLogo
           }
-          style={styles.matchImage}
+          style={[styles.matchImage, props.opacity && { opacity: 0.1 }]}
         ></Image>
       </View>
       <View>
         <Text style={styles.matchTitle}>{Title}</Text>
 
-        <GameType gameType={gameType} />
+        <GameType gameType={gameType} opacity={props.opacity} />
 
         <Text style={styles.matchMember}>
           참가 인원 {currentAmount}명 / {recruitAmount}명
@@ -61,12 +71,18 @@ const Match = (props) => {
   );
 };
 
+GameType.defaultProps = {
+  opacity: false,
+};
+
 const styles = StyleSheet.create({
   matchContainer: {
     flexDirection: "row",
     borderBottomWidth: 2,
     borderBottomColor: "#F6F6F6",
     marginBottom: 15,
+    alignItems: "center",
+    paddingBottom: 10,
   },
   matchImageWrapper: {
     marginRight: 25,
@@ -104,7 +120,6 @@ const styles = StyleSheet.create({
   matchDate: {
     fontSize: 9,
     fontWeight: "600",
-    marginBottom: 10,
     color: "#878787",
   },
 });

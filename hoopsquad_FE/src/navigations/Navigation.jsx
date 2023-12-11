@@ -20,7 +20,7 @@ import Notification from "../screens/Notification/Notification";
 import GoogleMapPin from "../components/GoogleMapPin";
 import ProfileRegister from "../screens/ProfileRegister/ProfileRegister";
 import MyProfile from "../screens/Profile/MyProfile";
-
+import MyLocation from "../screens/MyLocation";
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
@@ -54,15 +54,19 @@ const Navigation = () => {
       <Stack.Navigator
         screenOptions={{ contentStyle: { backgroundColor: "white" } }}
       >
-        {user ? (
+        {!user && <Stack.Screen name="Login" component={Login} />}
+        {user && user.Location1.City === null && (
           <Stack.Screen
-            name="Main"
-            component={Main}
+            name="MyLocation"
+            component={MyLocation}
             options={{ headerShown: false }}
           />
-        ) : (
-          <Stack.Screen name="Login" component={Login} />
         )}
+        <Stack.Screen
+          name="Main"
+          component={Main}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="Match"
           component={Matching}
