@@ -21,6 +21,8 @@ import GoogleMapPin from "../components/GoogleMapPin";
 import ProfileRegister from "../screens/ProfileRegister/ProfileRegister";
 import MyProfile from "../screens/Profile/MyProfile";
 import MyLocation from "../screens/MyLocation";
+import Team from "../screens/Team/Team";
+
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
@@ -122,6 +124,11 @@ const Navigation = () => {
         <Stack.Screen
           name="MyProfile"
           component={MyProfile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Team"
+          component={Team}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
