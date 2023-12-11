@@ -81,6 +81,8 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderBottomColor: "#F6F6F6",
     marginBottom: 15,
+    alignItems: "center",
+    paddingBottom: 10,
   },
   matchImageWrapper: {
     marginRight: 25,
@@ -118,7 +120,6 @@ const styles = StyleSheet.create({
   matchDate: {
     fontSize: 9,
     fontWeight: "600",
-    marginBottom: 10,
     color: "#878787",
   },
 });
