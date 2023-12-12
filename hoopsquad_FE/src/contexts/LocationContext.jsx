@@ -18,6 +18,8 @@ export const LocationProvider = ({ children }) => {
     City: null,
   });
 
+  const [nowSelectLocation, setNowSelectLocation] = useState("");
+
   return (
     <Locationcontext.Provider
       value={{
@@ -29,6 +31,8 @@ export const LocationProvider = ({ children }) => {
         setTeamFirstLocation,
         teamSecondLocation,
         setTeamSecondLocation,
+        nowSelectLocation,
+        setNowSelectLocation,
       }}
     >
       {children}

@@ -20,7 +20,7 @@ const MyLocation = ({ route }) => {
   const { team } = route.params;
   const navigation = useNavigation();
   const { user, setUser } = useContext(Usercontext);
-  const { setTeamFirstLocation, setTeamSecondLocation } =
+  const { setTeamFirstLocation, setTeamSecondLocation, setNowSelectLocation } =
     useContext(Locationcontext);
   const [startLocation, setStartLocation] = useState("강원도");
   const [firstLocation, setFirstLocation] = useState({
@@ -76,6 +76,7 @@ const MyLocation = ({ route }) => {
           city: secondLocation.City,
         },
       });
+      setNowSelectLocation(firstLocation.City);
     } catch (error) {
       console.log(error);
     }

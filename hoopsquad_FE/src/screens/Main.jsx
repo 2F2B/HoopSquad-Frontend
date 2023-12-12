@@ -11,6 +11,7 @@ import {
 import { useContext, useEffect, useState } from "react";
 import NavigationBar from "../components/NavigationBar";
 import Usercontext from "../contexts/UserContext";
+import LocationContext from "../contexts/LocationContext";
 import { usePushNotifications } from "../hooks/usePushNotification";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
@@ -20,10 +21,11 @@ import HoopSquadFullLogo from "../../assets/HoopSquadFullLogo.png";
 
 const Main = () => {
   const { user, logout } = useContext(Usercontext);
+  const { nowSelectLocation, setNowSelectLocation } =
+    useContext(LocationContext);
   const { expoPushToken } = usePushNotifications();
   const navigation = useNavigation();
   const [locationModal, setLocationModal] = useState(false);
-  const [nowLocation, setNowLocation] = useState();
 
   const [locationAlert, setLocationAlert] = useState();
 
@@ -34,11 +36,8 @@ const Main = () => {
     if (user.Location1.City === null) {
       setLocationAlert(true);
     }
+    setNowSelectLocation(user.Location1?.City);
   }, []);
-
-  useEffect(() => {
-    setNowLocation(user.Location1?.City);
-  }, [user.Location1]);
 
   const sendPushToken = async () => {
     try {
@@ -141,7 +140,7 @@ const Main = () => {
                 style={{ flexDirection: "row", alignItems: "center" }}
               >
                 <Text style={{ fontSize: 20, fontWeight: 700, marginRight: 5 }}>
-                  {nowLocation}
+                  {nowSelectLocation}
                 </Text>
                 <AntDesign
                   name="down"
@@ -166,7 +165,7 @@ const Main = () => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    setNowLocation(user.Location1?.City);
+                    setNowSelectLocation(user.Location1?.City);
                     setLocationModal(false);
                   }}
                 >
@@ -175,7 +174,7 @@ const Main = () => {
                       fontSize: 18,
                       fontWeight: 700,
                       color:
-                        user.Location1?.City === nowLocation
+                        user.Location1?.City === nowSelectLocation
                           ? "black"
                           : "#CDCDCD",
                       marginBottom: 20,
@@ -188,7 +187,7 @@ const Main = () => {
                 {user.Location2 !== null && (
                   <TouchableOpacity
                     onPress={() => {
-                      setNowLocation(user.Location2?.City);
+                      setNowSelectLocation(user.Location2?.City);
                       setLocationModal(false);
                     }}
                   >
@@ -197,7 +196,7 @@ const Main = () => {
                         fontSize: 18,
                         fontWeight: 700,
                         color:
-                          user.Location2?.City === nowLocation
+                          user.Location2?.City === nowSelectLocation
                             ? "black"
                             : "#CDCDCD",
                         marginBottom: 20,
