@@ -23,6 +23,7 @@ const NavigationBar = (props) => {
       <TouchableOpacity
         style={styles.navigationBox}
         onPress={() => navigation.navigate("Team")}
+        disabled={props.touchable}
       >
         <Image
           source={Team}
@@ -34,6 +35,7 @@ const NavigationBar = (props) => {
       <TouchableOpacity
         style={styles.navigationBox}
         onPress={() => navigation.navigate("ChatList")}
+        disabled={props.touchable}
       >
         <Image
           source={Chat}
@@ -46,6 +48,7 @@ const NavigationBar = (props) => {
       <TouchableOpacity
         style={styles.navigationBox}
         onPress={() => navigation.navigate("Main")}
+        disabled={props.touchable}
       >
         <Image
           source={Main}
@@ -58,6 +61,7 @@ const NavigationBar = (props) => {
       <TouchableOpacity
         style={styles.navigationBox}
         onPress={() => navigation.navigate("Match")}
+        disabled={props.touchable}
       >
         <Image
           source={Matching}
@@ -67,7 +71,7 @@ const NavigationBar = (props) => {
         <Text>매칭</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navigationBox}>
+      <TouchableOpacity style={styles.navigationBox} disabled={props.touchable}>
         <Image
           source={BasketBallCourt}
           resizeMode="contain"
@@ -81,6 +85,7 @@ const NavigationBar = (props) => {
 
 NavigationBar.defaultProps = {
   opacity: false,
+  touchable: false,
 };
 
 const styles = StyleSheet.create({
