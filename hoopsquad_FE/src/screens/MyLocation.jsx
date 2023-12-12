@@ -82,7 +82,13 @@ const MyLocation = () => {
       <StatusBar style="dark" />
       <View style={styles.header}>
         <View style={styles.headerTextWrapper}>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              if (firstLocation.City !== null) {
+                navigation.navigate("Main");
+              }
+            }}
+          >
             <Ionicons
               name="chevron-back"
               size={30}
