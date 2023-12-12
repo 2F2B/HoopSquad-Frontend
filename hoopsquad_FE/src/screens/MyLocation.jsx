@@ -91,7 +91,7 @@ const MyLocation = ({ route }) => {
               {
                 team
                   ? navigation.goBack()
-                  : firstLocation.City !== null && navigation.navigate("Main");
+                  : user.Location1.City !== null && navigation.goBack();
               }
             }}
           >
