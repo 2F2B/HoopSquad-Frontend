@@ -104,6 +104,23 @@ const Profile = ({ route }) => {
           </TouchableOpacity>
           <Text style={styles.headerLeftChildText}>프로필</Text>
         </View>
+        <View>
+          <TouchableOpacity
+            onPress={() =>
+              profileInfo?.User_id === user.User_id &&
+              navigation.navigate("ProfileRegister")
+            }
+          >
+            <Text
+              style={[
+                styles.headerRightChildText,
+                { opacity: hoopScoreModal ? 0.3 : 1 },
+              ]}
+            >
+              {profileInfo?.User_id === user.User_id && "수정"}
+            </Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* 세부 내용 */}

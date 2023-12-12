@@ -26,7 +26,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
 import { alertUpward } from "../../components/InputAlert";
 
-const TeamRegister = () => {
+const TeamEdit = ({ route }) => {
   const navigation = useNavigation();
   const {
     teamFirstLocation,
@@ -34,11 +34,16 @@ const TeamRegister = () => {
     setTeamFirstLocation,
     setTeamSecondLocation,
   } = useContext(Locationcontext);
-
+  const { teamId } = route.params;
   const { user } = useContext(Usercontext);
   const [teamName, setTeamName] = useState("");
+  const [teamInfo, setTeamInfo] = useState();
   const [teamIntroduce, setTeamInroduce] = useState("");
   const [teamActiveTime, setTeamActiveTime] = useState("");
+
+  useEffect(() => {
+    getTeamDetailInfo();
+  }, []);
 
   const registerTeamName = (teamName) => {
     setTeamName(teamName);
@@ -144,6 +149,20 @@ const TeamRegister = () => {
     }));
   };
 
+  const getTeamDetailInfo = async () => {
+    try {
+      const response = await axios.get(`${REACT_APP_PROXY}team/${teamId}`);
+      setTeamInfo(response.data);
+      setTeamImageUrl(response.data.TeamImage);
+      setTeamName(response.data.Name);
+      setTeamInroduce(response.data.Introduce);
+      setTeamActiveTime(response.data.ActiveTime);
+      console.log("팀수정 정보", response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -167,10 +186,9 @@ const TeamRegister = () => {
                 style={{ marginTop: 5 }}
               />
             </TouchableOpacity>
-            <Text style={styles.headerLeftChildText}>팀 등록</Text>
+            <Text style={styles.headerLeftChildText}>팀 수정</Text>
           </View>
           <View>
-            {/* 완료 누르면 전역 팀 위치 초기화 */}
             <TouchableOpacity onPress={() => registerTeam()}>
               <Text style={styles.headerTextSuccess}>완료</Text>
             </TouchableOpacity>
@@ -199,7 +217,7 @@ const TeamRegister = () => {
                       <Feather name="plus-circle" size={35} color="#E2E2E2" />
                     </View>
                   </TouchableOpacity>
-                  {teamImageUrl && (
+                  {teamImageUrl !== null && (
                     <TouchableOpacity
                       style={styles.imageWrapper}
                       onPress={() => setTeamImageUrl("")}
@@ -236,7 +254,7 @@ const TeamRegister = () => {
                 ]}
                 onChangeText={registerTeamName}
                 placeholderTextColor="#8F8F8F"
-                placeholder={"팀 이름을 작성해 주세요"}
+                placeholder={teamInfo?.Name}
               ></TextInput>
             </View>
 
@@ -255,7 +273,11 @@ const TeamRegister = () => {
                 ]}
                 onChangeText={registerTeamIntroducee}
                 placeholderTextColor="#8F8F8F"
-                placeholder={"팀 소개를 작성해 주세요"}
+                placeholder={
+                  teamInfo?.Introduce !== null
+                    ? teamInfo?.Introduce
+                    : "팀 소개를 작성해 주세요"
+                }
                 maxLength={100}
                 textAlignVertical="top"
               ></TextInput>
@@ -291,16 +313,30 @@ const TeamRegister = () => {
                     fontSize: 12,
                     width: "85%",
                     color:
-                      teamFirstLocation?.location != null ? "black" : "#8F8F8F",
+                      teamFirstLocation.City !== null ? "black" : "#8F8F8F",
                   }}
                 >
-                  {teamFirstLocation?.location != null
-                    ? `${teamFirstLocation?.location} ${teamFirstLocation?.City}`
+                  {teamFirstLocation.City !== null
+                    ? `${
+                        teamFirstLocation?.City !== null
+                          ? `${teamFirstLocation?.location} ${teamFirstLocation?.City}`
+                          : ""
+                      } ${
+                        teamInfo?.Location2?.City !== null
+                          ? ` / ${teamSecondLocation?.location} ${teamSecondLocation?.City}`
+                          : ""
+                      }`
+                    : teamInfo?.Location1.City !== null
+                    ? `${
+                        teamInfo?.Location1?.City !== null
+                          ? `${teamInfo?.Location1?.location} ${teamInfo?.Location1?.City}`
+                          : ""
+                      } ${
+                        teamInfo?.Location2?.City !== null
+                          ? `/ ${teamInfo?.Location2?.location} ${teamInfo?.Location2?.City}`
+                          : ""
+                      }`
                     : "활동 지역을 선택해 주세요"}
-
-                  {teamSecondLocation?.location != null
-                    ? ` / ${teamSecondLocation?.location} ${teamSecondLocation?.City}`
-                    : ""}
                 </Text>
               </TouchableOpacity>
             </View>
@@ -320,7 +356,11 @@ const TeamRegister = () => {
                 ]}
                 onChangeText={registerTeamActiveTime}
                 placeholderTextColor="#8F8F8F"
-                placeholder={"활동 시간을 작성해 주세요"}
+                placeholder={
+                  teamInfo?.ActiveTime !== null
+                    ? teamInfo?.ActiveTime
+                    : "활동 시간을 작성해 주세요"
+                }
                 maxLength={100}
                 textAlignVertical="top"
               ></TextInput>
@@ -400,4 +440,4 @@ const styles = StyleSheet.create({
     width: "85%",
   },
 });
-export default TeamRegister;
+export default TeamEdit;

@@ -24,6 +24,7 @@ import MyLocation from "../screens/MyLocation";
 import Team from "../screens/Team/Team";
 import TeamProfile from "../screens/Profile/TeamProfile";
 import TeamRegister from "../screens/Team/TeamRegister";
+import TeamEdit from "../screens/Team/TeamEdit";
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
@@ -145,6 +146,12 @@ const Navigation = () => {
         <Stack.Screen
           name="TeamRegister"
           component={TeamRegister}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="TeamEdit"
+          component={TeamEdit}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
