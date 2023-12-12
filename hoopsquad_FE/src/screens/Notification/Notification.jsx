@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect, useRef } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   Text,
   View,
@@ -17,30 +17,58 @@ import NavigationBar from "../../components/NavigationBar";
 
 const Notification = () => {
   const { user } = useContext(Usercontext);
-  const [notificationList, setNotificationList] = useState({
-    matchNotificationList: [],
-    teamNotificationList: [],
-  });
+  const [matchGuestNotificationList, setMatchGuestNotificationList] = useState(
+    []
+  );
+  const [matchHostNotificationList, setmatchHostNotificationList] = useState(
+    []
+  );
+  const [matchNotificationList, setmatchNotificationList] = useState([]);
+
+  const [teamNotificationList, setTeamNotificationList] = useState([]);
   const navigation = useNavigation();
   const [selectTap, setSelectTap] = useState("match");
 
   useEffect(() => {
     const userId = user.User_id;
     if (userId) {
-      getMatchNotification();
-      getTeamNotification();
+      getMatchHostNotification();
+      getMatchGuestNotification();
+      // getTeamNotification();
     }
   }, []);
 
-  const getMatchNotification = async () => {
+  useEffect(() => {
+    const mergedMatchNotifications = [
+      ...matchGuestNotificationList,
+      ...matchHostNotificationList,
+    ];
+
+    const sortedMatchNotifications = sortNotificationsByTime(
+      mergedMatchNotifications
+    );
+    setmatchNotificationList(sortedMatchNotifications);
+  }, [matchGuestNotificationList, matchHostNotificationList]);
+
+  const getMatchHostNotification = async () => {
     try {
       const res = await axios.get(
-        `${REACT_APP_PROXY}notification/match/${user.User_id}`
+        `${REACT_APP_PROXY}notification/match/host/${user.User_id}`
       );
-      setNotificationList((prevState) => ({
-        ...prevState,
-        matchNotificationList: res.data,
-      }));
+      console.log("hostNoti", res.data);
+      setmatchHostNotificationList(res.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getMatchGuestNotification = async () => {
+    try {
+      const res = await axios.get(
+        `${REACT_APP_PROXY}notification/match/guest/${user.User_id}`
+      );
+      console.log("guestNoti", res.data);
+      setMatchGuestNotificationList(res.data);
     } catch (error) {
       console.error(error);
     }
@@ -51,13 +79,16 @@ const Notification = () => {
       const res = await axios.get(
         `${REACT_APP_PROXY}notification/team/${user.User_id}`
       );
-      setNotificationList((prevState) => ({
-        ...prevState,
-        teamNotificationList: res.data,
-      }));
+      setTeamNotificationList(res.data);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const sortNotificationsByTime = (notifications) => {
+    return notifications.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
   };
 
   const handleTapChange = (tap) => {
@@ -99,20 +130,15 @@ const Notification = () => {
           </Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.notification}>
-        <FlatList
-          style={styles.chatContent}
-          data={
-            selectTap === "match"
-              ? notificationList.matchNotificationList
-              : notificationList.teamNotificationList
-          }
-          keyExtractor={(_, idx) => idx}
-          renderItem={({ item }) => (
-            <NotificationItem item={item} type={selectTap} />
-          )}
-        />
-      </View>
+      <FlatList
+        style={styles.chatContent}
+        data={
+          selectTap === "match" ? matchNotificationList : teamNotificationList
+        }
+        keyExtractor={(_, idx) => idx.toString()}
+        renderItem={({ item }) => <NotificationItem item={item} />}
+        contentContainerStyle={{ paddingBottom: 65 }}
+      />
       <NavigationBar />
     </SafeAreaView>
   );
