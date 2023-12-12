@@ -27,8 +27,8 @@ const Notification = () => {
   useEffect(() => {
     const userId = user.User_id;
     if (userId) {
-      // getMatchNotification();
-      // getTeamNotification();
+      getMatchNotification();
+      getTeamNotification();
     }
   }, []);
 

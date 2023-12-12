@@ -17,7 +17,8 @@ import SocketContext from "../../../contexts/SocketContext";
 import Usercontext from "../../../contexts/UserContext";
 
 const EmptyChatRoom = ({ route }) => {
-  const { opponentImage, hostId, guestId, postingId, nickname } = route.params;
+  const { opponentImage, hostId, guestId, postingId, nickname, postingTitle } =
+    route.params;
 
   const navigation = useNavigation();
   const { socketRef } = useContext(SocketContext);
@@ -41,11 +42,14 @@ const EmptyChatRoom = ({ route }) => {
         postingId,
         roomId
       );
+      console.log("roomId", hostId, guestId, postingId, roomId);
       navigation.replace("ChatRoom", {
         roomId,
         postingId,
         nickname,
         opponentImage,
+        hostId,
+        postingTitle,
       });
     });
   };
