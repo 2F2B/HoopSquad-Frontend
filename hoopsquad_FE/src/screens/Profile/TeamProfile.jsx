@@ -27,43 +27,55 @@ const TeamProfile = ({ route }) => {
   const { teamId } = route.params;
   const [teamInfo, setTeamInfo] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
+  const [userIndex, setUserIndex] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const { user } = useContext(Usercontext);
   const screenWidth = Dimensions.get("window").width;
-
   useEffect(() => {
     getTeamDetailInfo();
-    console.log(user);
   }, []);
 
   const getTeamDetailInfo = async () => {
     try {
       const response = await axios.get(`${REACT_APP_PROXY}team/${teamId}`);
       setTeamInfo(response.data);
-      console.log(response.data);
+      // console.log("팀하나", response.data);
+      // console.log("유저", user);
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const handleScroll = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(contentOffsetX / Math.floor(screenWidth - 85));
+    setImageIndex(index);
+  };
+
+  const userScroll = (event) => {
+    const contentOffsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.floor(contentOffsetX / Math.floor(screenWidth - 150));
+    setUserIndex(index);
   };
 
   const checkUser = () => {
     if (teamInfo?.Admin_id === user.User_id) {
       return "수정";
     }
+    if (user?.Team.length === 0) {
+      return "가입 신청";
+    }
 
-    // 팀 유저 아이디가 있는 배열에서 안에 내 아이디가 없다 신청
-    // 만약 내가 팀이 있다 아무것도 안나옴
-    // if() {
-    // 만약 내가 팀이 없다 return "신청"
-    //   아니면 빈문자열
-    // }
-    // if(user.TeamId !== null) {
-    //   return ""
-    // } else {
-    //   return "신청"
-    // }
+    if (user.Team.length > 0) {
+      if (
+        user.Team[0].Admin_id === user.User_id &&
+        user.User_id !== teamInfo?.Admin_id
+      ) {
+        return "경기 신청";
+      }
+    }
 
-    // 만약 내가 팀 대장이다 그러면 매칭 신청
+    return "";
   };
 
   return (
@@ -86,7 +98,12 @@ const TeamProfile = ({ route }) => {
           <Text style={styles.headerLeftChildText}>팀 프로필</Text>
         </View>
         <View>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() =>
+              checkUser() === "수정" &&
+              navigation.navigate("TeamEdit", { teamId })
+            }
+          >
             <Text style={[styles.headerRightChildText]}>{checkUser()}</Text>
           </TouchableOpacity>
         </View>
@@ -95,10 +112,16 @@ const TeamProfile = ({ route }) => {
       <View style={styles.imgWrapper}>
         <View style={{ width: screenWidth }}>
           <Image
-            resizeMode="contain"
-            source={HoopSquadFullLogo}
-            style={[styles.scrollImage, openModal && { opacity: 0.2 }]}
-          ></Image>
+            resizeMode="cover"
+            source={
+              teamInfo?.TeamImage !== null
+                ? {
+                    uri: `${REACT_APP_PROXY}image/team/${teamInfo?.TeamImage}`,
+                  }
+                : HoopSquadFullLogo
+            }
+            style={{ width: "100%", height: "100%" }}
+          />
         </View>
       </View>
 
@@ -114,7 +137,10 @@ const TeamProfile = ({ route }) => {
             {teamInfo?.Name}
           </Text>
         </View>
-        <ScrollView style={{ marginTop: 30, borderWidth: 1 }}>
+        <ScrollView
+          style={{ marginTop: 30 }}
+          contentContainerStyle={{ paddingBottom: 400 }}
+        >
           <TeamProfileBox title="팀 소개">
             <View
               style={{
@@ -122,9 +148,9 @@ const TeamProfile = ({ route }) => {
                 borderRadius: 10,
                 borderColor: "#E2E2E2",
                 padding: 10,
+                height: 120,
               }}
             >
-              {/* {teamInfo?.Introduce} */}
               <Text>안녕하세요</Text>
             </View>
           </TeamProfileBox>
@@ -134,12 +160,12 @@ const TeamProfile = ({ route }) => {
                 Image={profile_Location}
                 Title={"활동 지역"}
                 Text={`${
-                  teamInfo?.Location1.City != null
-                    ? `${teamInfo?.Location1.location} ${teamInfo?.Location1.City}`
+                  teamInfo?.Location1?.City != "null"
+                    ? `${teamInfo?.Location1?.location} ${teamInfo?.Location1?.City}`
                     : ""
                 } ${
-                  teamInfo?.Location2.City != null
-                    ? `/ ${teamInfo?.Location2.location} ${teamInfo?.Location2.City}`
+                  teamInfo?.Location2?.City != "null"
+                    ? `/ ${teamInfo?.Location2?.location} ${teamInfo?.Location2?.City}`
                     : ""
                 }`}
                 showUnderline={true}
@@ -147,14 +173,261 @@ const TeamProfile = ({ route }) => {
               <ProfileInfo
                 Image={profile_Year}
                 Title={"활동 시간"}
-                // 활동시간들어갈 자리
-                Text={"매주 화, 목 저녁 8시"}
+                Text={teamInfo?.ActiveTime !== null ? teamInfo?.ActiveTime : ""}
                 showUnderline={true}
               />
             </View>
           </TeamProfileBox>
           <TeamProfileBox title="팀 구성원">
-            {/* 이미지, 및 이름 받아와 처리 */}
+            <View style={styles.gridContainer}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={true}
+                style={styles.scrollImage}
+                onScroll={(event) => userScroll(event)}
+                scrollEventThrottle={16}
+              >
+                {teamInfo?.PlayerInfos.length > 0 &&
+                  teamInfo?.PlayerInfos.map((info, index) => (
+                    <View
+                      style={[styles.gridItem, { width: screenWidth / 4 }]}
+                      key={index}
+                    >
+                      <TouchableOpacity
+                        onPress={() =>
+                          navigation.navigate("Profile", {
+                            profileId: info.User_id,
+                          })
+                        }
+                      >
+                        <View
+                          style={{
+                            borderWidth: 1,
+                            height: "80%",
+                            aspectRatio: 1 / 1,
+                            borderRadius: 100,
+                            overflow: "hidden",
+                            borderColor: "#E2E2E2",
+                          }}
+                        >
+                          <Image
+                            resizeMode="cover"
+                            source={
+                              info?.Image.length > 0
+                                ? {
+                                    uri: `${REACT_APP_PROXY}image/team/${info.Image[0]}`,
+                                  }
+                                : HoopSquadFullLogo
+                            }
+                            style={{ width: "100%", height: "100%" }}
+                          />
+                        </View>
+                      </TouchableOpacity>
+
+                      <Text
+                        style={{
+                          textAlign: "center",
+                          fontSize: 14,
+                          fontWeight: "700",
+                        }}
+                      >
+                        {info.Name}
+                      </Text>
+                    </View>
+                  ))}
+              </ScrollView>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 5,
+                marginBottom: 10,
+              }}
+            >
+              {teamInfo?.PlayerInfos.length > 0 &&
+                teamInfo.PlayerInfos.map(
+                  (player, index) =>
+                    index % 3 === 0 && (
+                      <View
+                        key={index}
+                        style={[
+                          styles.imageDot,
+                          {
+                            backgroundColor:
+                              index / 3 === userIndex ? "#F49058" : "black",
+                          },
+                        ]}
+                      ></View>
+                    )
+                )}
+            </View>
+          </TeamProfileBox>
+          <TeamProfileBox title="최근 경기 전적">
+            <View style={{ alignItems: "center" }}>
+              <ScrollView
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={true}
+                style={styles.scrollImage}
+                onScroll={(event) => handleScroll(event)}
+                scrollEventThrottle={16}
+              >
+                {teamInfo?.Records.length > 0 &&
+                  teamInfo?.Records.map((data, index) => {
+                    return (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          width: screenWidth - 40,
+                        }}
+                        key={index}
+                      >
+                        <View style={{ flex: 0.8 }}>
+                          <View
+                            style={{
+                              width: "90%",
+                              aspectRatio: 1 / 1,
+                              marginBottom: 10,
+                              borderWidth: 0.5,
+                              borderColor: "#E2E2E2",
+                              borderRadius: 10,
+                              overflow: "hidden",
+                            }}
+                          >
+                            <Image
+                              resizeMode="cover"
+                              source={
+                                teamInfo?.TeamImage !== null
+                                  ? {
+                                      uri: `${REACT_APP_PROXY}image/team/${teamInfo?.TeamImage}`,
+                                    }
+                                  : HoopSquadFullLogo
+                              }
+                              style={{ width: "100%", height: "100%" }}
+                            />
+                          </View>
+                          <Text
+                            style={{
+                              width: "90%",
+                              textAlign: "center",
+                              fontSize: 15,
+                              fontWeight: "700",
+                            }}
+                          >
+                            {teamInfo?.Name}
+                          </Text>
+                        </View>
+
+                        <View
+                          style={{
+                            flex: 1,
+                            paddingVertical: 20,
+                          }}
+                        >
+                          <Text style={{ fontSize: 10, color: "#878787" }}>
+                            {formatDate(data.matchTime)}
+                          </Text>
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              justifyContent: "space-around",
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color:
+                                  data.ourScore > data.opponentScore
+                                    ? "#F3A241"
+                                    : "black",
+                              }}
+                            >
+                              {data.ourScore}
+                            </Text>
+                            <Text
+                              style={{
+                                fontSize: 20,
+                                color:
+                                  data.ourScore < data.opponentScore
+                                    ? "#F3A241"
+                                    : "black",
+                              }}
+                            >
+                              {data.opponentScore}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <View
+                          style={{
+                            flex: 0.8,
+                          }}
+                        >
+                          <TouchableOpacity
+                            onPress={() =>
+                              navigation.navigate("TeamProfile", { teamId })
+                            }
+                          >
+                            <View
+                              style={{
+                                width: "90%",
+                                aspectRatio: 1 / 1,
+                                marginBottom: 10,
+                                borderWidth: 0.5,
+                                borderColor: "#E2E2E2",
+                                borderRadius: 10,
+                                overflow: "hidden",
+                              }}
+                            >
+                              <Image
+                                resizeMode="cover"
+                                source={
+                                  data?.opponentImage !== null
+                                    ? {
+                                        uri: `${REACT_APP_PROXY}image/team/${data?.opponentImage}`,
+                                      }
+                                    : HoopSquadFullLogo
+                                }
+                                style={{ width: "100%", height: "100%" }}
+                              />
+                            </View>
+                          </TouchableOpacity>
+
+                          <Text
+                            style={{
+                              width: "90%",
+                              textAlign: "center",
+                              fontSize: 15,
+                              fontWeight: "700",
+                            }}
+                          >
+                            {data?.opponentTeam}
+                          </Text>
+                        </View>
+                      </View>
+                    );
+                  })}
+              </ScrollView>
+              <View style={{ flexDirection: "row" }}>
+                {teamInfo?.Records.length > 0 &&
+                  teamInfo?.Records.map((_, index) => {
+                    return (
+                      <View
+                        key={index}
+                        style={[
+                          styles.imageDot,
+                          {
+                            backgroundColor:
+                              index === imageIndex ? "#F49058" : "black",
+                          },
+                        ]}
+                      ></View>
+                    );
+                  })}
+              </View>
+            </View>
           </TeamProfileBox>
         </ScrollView>
       </View>
@@ -169,7 +442,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   header: {
-    padding: 10,
+    paddingVertical: 10,
+    paddingLeft: 10,
+    paddingRight: 20,
     flexDirection: "row",
     alignItems: "center",
     borderBottomWidth: 0.5,
@@ -217,6 +492,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     marginBottom: 10,
+    flex: 1,
   },
   headerTitle: {
     flexDirection: "row",
@@ -242,6 +518,24 @@ const styles = StyleSheet.create({
   imageSize: {
     width: "100%",
     height: "100%",
+  },
+  gridContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    width: "100%",
+    paddingHorizontal: 10,
+  },
+  gridItem: {
+    aspectRatio: 1 / 1,
+    alignItems: "center",
+    marginRight: 20,
+  },
+  imageDot: {
+    width: 6,
+    height: 6,
+    marginRight: 5,
+    borderRadius: 5,
   },
 });
 export default TeamProfile;

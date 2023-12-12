@@ -20,6 +20,7 @@ import { REACT_APP_PROXY } from "@env";
 import { useNavigation } from "@react-navigation/native";
 import NavigationBar from "../../components/NavigationBar";
 import FilterButton from "../Matching/components/FilterButton";
+import LocationConetext from "../../contexts/LocationContext";
 const Team = () => {
   const [teamData, setTeamData] = useState(null);
   const [filter, setFilter] = useState(false);
@@ -35,11 +36,12 @@ const Team = () => {
     Three: false,
     Five: false,
   });
+  const { nowSelectLocation, setNowSelectLocation } =
+    useContext(LocationConetext);
   const navigation = useNavigation();
   const isFocused = useIsFocused();
 
   const [locationModal, setLocationModal] = useState(false);
-  const [nowLocation, setNowLocation] = useState(user.Location1.City);
 
   const Sorts = [
     { label: "작성 날짜", value: "WriteDate" },
@@ -47,10 +49,16 @@ const Team = () => {
   ];
 
   useEffect(() => {
-    getTeam(
-      `?location=${activityLocation.location}&city=${activityLocation.City}`
-    );
-  }, [activityLocation]);
+    if (nowSelectLocation === user.Location1.City) {
+      getTeam(
+        `?location=${user.Location1.location}&city=${user.Location1.City}`
+      );
+    } else {
+      getTeam(
+        `?location=${user.Location2.location}&city=${user.Location2.City}`
+      );
+    }
+  }, [activityLocation, isFocused]);
 
   const getTeam = async (query) => {
     try {
@@ -61,32 +69,13 @@ const Team = () => {
     }
   };
 
-  // 필터링 부분 물어봐야함
-  // useEffect(() => {
-  //   getMatch(
-  //     `?Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=`
-  //   );
-  // }, [selectSort, isFocused, nowLocation]);
-
-  // const searchGameType = async () => {
-  //   getMatch(
-  //     `?Sort=${selectSort}&Location=${activityLocation}&Filter=GameType&One=${gameTypeList.One}&Three=${gameTypeList.Three}&Five=${gameTypeList.Five}`
-  //   );
-  // };
-
-  // const getMatch = async (query) => {
-  //   try {
-  //     const response = await axios.get(`${REACT_APP_PROXY}match${query}`);
-  //     setMatchData(response.data);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-
-  const searchTitle = async (text) => {
-    // getMatch(
-    //   `?Sort=${selectSort}&Location=${activityLocation}&Filter=Title&Input=${text}`
-    // );
+  const getMatch = async (query) => {
+    try {
+      const response = await axios.get(`${REACT_APP_PROXY}team${query}`);
+      setMatchData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -119,78 +108,10 @@ const Team = () => {
               width: "30%",
             }}
           >
-            <TouchableOpacity
-              onPress={() => {
-                setLocationModal((prevLocationModal) => !prevLocationModal);
-              }}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <Text style={{ fontSize: 20, fontWeight: 700, marginRight: 5 }}>
-                {nowLocation}
-              </Text>
-              <AntDesign
-                name="down"
-                size={24}
-                color="black"
-                style={{ marginTop: 5 }}
-              />
-            </TouchableOpacity>
+            <Text style={{ fontSize: 20, fontWeight: 700, marginRight: 5 }}>
+              {nowSelectLocation}
+            </Text>
           </View>
-          {locationModal && (
-            <View style={styles.locationModalWrapper}>
-              <TouchableOpacity
-                onPress={() => {
-                  setNowLocation(user.Location1?.City);
-                  setActivityLocation({
-                    location: user.Location1.location,
-                    City: user.Location1.City,
-                  });
-                  setLocationModal(false);
-                }}
-              >
-                <Text
-                  style={[
-                    styles.locationModalText,
-                    {
-                      color:
-                        user.Location1?.City === nowLocation
-                          ? "black"
-                          : "#CDCDCD",
-                    },
-                  ]}
-                >
-                  {user.Location1?.City}
-                </Text>
-              </TouchableOpacity>
-
-              {user.Location2.City !== null && (
-                <TouchableOpacity
-                  onPress={() => {
-                    setNowLocation(user.Location2?.City);
-                    setActivityLocation({
-                      location: user.Location2.location,
-                      City: user.Location2.City,
-                    });
-                    setLocationModal(false);
-                  }}
-                >
-                  <Text
-                    style={[
-                      styles.locationModalText,
-                      {
-                        color:
-                          user.Location2?.City === nowLocation
-                            ? "black"
-                            : "#CDCDCD",
-                      },
-                    ]}
-                  >
-                    {user.Location2?.City}
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
         </View>
 
         <View style={styles.matchingContainer}>
@@ -209,7 +130,6 @@ const Team = () => {
             <TextInput
               placeholder="이름으로 검색해주세요"
               style={[styles.input, { borderColor: "rgba(0, 0, 0, 0.1)" }]}
-              onChangeText={searchTitle}
               editable={!locationModal}
             ></TextInput>
           </View>
@@ -284,11 +204,13 @@ const Team = () => {
               })}
             </ScrollView>
             <View style={[styles.registerButton]}>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("TeamRegister")}
-              >
-                <AntDesign name="pluscircle" size={35} color={"#F3A241"} />
-              </TouchableOpacity>
+              {user.Team.length === 0 && (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate("TeamRegister")}
+                >
+                  <AntDesign name="pluscircle" size={35} color={"#F3A241"} />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>

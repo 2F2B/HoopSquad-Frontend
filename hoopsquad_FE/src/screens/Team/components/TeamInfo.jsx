@@ -24,9 +24,9 @@ const TeamInfo = (props) => {
         <Image
           resizeMode="cover"
           source={
-            teamImage.length > 0
+            teamImage !== null
               ? {
-                  uri: `${REACT_APP_PROXY}image/team/${teamImage[0].ImageName}`,
+                  uri: `${REACT_APP_PROXY}image/team/${teamImage.ImageName}`,
                 }
               : HoopSquadFullLogo
           }
@@ -34,20 +34,16 @@ const TeamInfo = (props) => {
         ></Image>
       </View>
 
-      <View
-        style={{
-          height: "95%",
-          justifyContent: "space-between",
-        }}
-      >
+      <View>
         <Text style={styles.matchTitle}>{Name}</Text>
-
         <View style={styles.matchLocationWrapper}>
           <Entypo name="location-pin" size={16} color="black" />
           <Text style={styles.matchLocation}>
-            {`${Location1} ${City1} ${Location2 && City2 ? "/" : ""} ${
-              Location2 || ""
-            } ${City2 || ""}`}
+            {`${Location1} ${City1} ${
+              Location2 !== "null" && City2 !== "null"
+                ? `/ ${Location2} ${City2}`
+                : ""
+            }`}
           </Text>
         </View>
         <Text style={styles.teamRecord}>{`${game}전 ${win}승 ${lose}패`}</Text>
@@ -85,12 +81,8 @@ const styles = StyleSheet.create({
   matchTitle: {
     fontSize: 13,
     fontWeight: "700",
-    alignItems: "flex-start",
   },
-  matchMember: {
-    fontSize: 11,
-    fontWeight: "600",
-  },
+
   matchLocationWrapper: {
     flexDirection: "row",
     alignItems: "center",
@@ -98,10 +90,13 @@ const styles = StyleSheet.create({
   matchLocation: {
     fontSize: 11,
     fontWeight: "600",
+    marginBottom: 11,
+    marginTop: 11,
   },
   teamRecord: {
     fontSize: 11,
     fontWeight: "600",
+    marginBottom: 10,
   },
   matchDate: {
     fontSize: 9,
