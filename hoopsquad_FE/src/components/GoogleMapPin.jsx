@@ -54,6 +54,7 @@ const GoogleMapPin = () => {
     requestAnimationFrame(() => {
       setPinLocation({ latitude, longitude });
       nowSetLocation({ latitude, longitude });
+      setLocation({ latitude, longitude });
     });
   };
 

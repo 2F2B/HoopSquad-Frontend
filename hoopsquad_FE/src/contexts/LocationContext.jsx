@@ -8,9 +8,28 @@ export const LocationProvider = ({ children }) => {
   });
   const [address, setAddress] = useState("장소를 선택해주세요");
 
+  const [teamFirstLocation, setTeamFirstLocation] = useState({
+    location: null,
+    City: null,
+  });
+
+  const [teamSecondLocation, setTeamSecondLocation] = useState({
+    location: null,
+    City: null,
+  });
+
   return (
     <Locationcontext.Provider
-      value={{ location, setLocation, address, setAddress }}
+      value={{
+        location,
+        setLocation,
+        address,
+        setAddress,
+        teamFirstLocation,
+        setTeamFirstLocation,
+        teamSecondLocation,
+        setTeamSecondLocation,
+      }}
     >
       {children}
     </Locationcontext.Provider>

@@ -97,6 +97,7 @@ const MatchRegister = () => {
   const formData = new FormData();
   const { height } = Dimensions.get("window");
   const translateY = useRef(new Animated.Value(height)).current;
+  const [alertText, setAlertText] = useState("");
 
   const changeTitle = (title) => {
     setTitle(title);
@@ -189,6 +190,7 @@ const MatchRegister = () => {
             "Content-Type": "multipart/form-data",
           },
         });
+        setAddress("장소를 선택해주세요");
         navigation.navigate("Match");
       } catch (error) {
         console.log(error);
@@ -199,6 +201,7 @@ const MatchRegister = () => {
   };
 
   const isFormValid = () => {
+    setAlertText("비어 있는 항목이 있습니다");
     if (!title.trim()) {
       return false;
     }
@@ -220,6 +223,11 @@ const MatchRegister = () => {
     }
 
     if (address === "장소를 선택해주세요") {
+      return false;
+    }
+
+    if (isNaN(parseFloat(currentAmount)) || isNaN(parseFloat(recruitAmount))) {
+      setAlertText("참가 인원을 숫자로 입력해주세요");
       return false;
     }
 
@@ -503,7 +511,7 @@ const MatchRegister = () => {
           </View>
         </ScrollView>
         <NavigationBar />
-        <InputAlert translateY={translateY} />
+        <InputAlert translateY={translateY} text={alertText} />
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

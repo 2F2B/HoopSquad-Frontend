@@ -21,6 +21,9 @@ import GoogleMapPin from "../components/GoogleMapPin";
 import ProfileRegister from "../screens/ProfileRegister/ProfileRegister";
 import MyProfile from "../screens/Profile/MyProfile";
 import MyLocation from "../screens/MyLocation";
+import Team from "../screens/Team/Team";
+import TeamProfile from "../screens/Profile/TeamProfile";
+import TeamRegister from "../screens/Team/TeamRegister";
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
@@ -54,19 +57,16 @@ const Navigation = () => {
       <Stack.Navigator
         screenOptions={{ contentStyle: { backgroundColor: "white" } }}
       >
-        {!user && <Stack.Screen name="Login" component={Login} />}
-        {user && user.Location1.City === null && (
+        {user ? (
           <Stack.Screen
-            name="MyLocation"
-            component={MyLocation}
+            name="Main"
+            component={Main}
             options={{ headerShown: false }}
           />
+        ) : (
+          <Stack.Screen name="Login" component={Login} />
         )}
-        <Stack.Screen
-          name="Main"
-          component={Main}
-          options={{ headerShown: false }}
-        />
+
         <Stack.Screen
           name="Match"
           component={Matching}
@@ -122,6 +122,29 @@ const Navigation = () => {
         <Stack.Screen
           name="MyProfile"
           component={MyProfile}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Team"
+          component={Team}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="MyLocation"
+          component={MyLocation}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="TeamProfile"
+          component={TeamProfile}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="TeamRegister"
+          component={TeamRegister}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

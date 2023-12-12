@@ -17,7 +17,7 @@ export const alertUpward = (translateY, height) => {
   }, 3000);
 };
 
-const InputAlert = ({ translateY }) => {
+const InputAlert = ({ translateY, text }) => {
   return (
     <Animated.View
       style={[styles.animatedView, { transform: [{ translateY }] }]}
@@ -29,7 +29,7 @@ const InputAlert = ({ translateY }) => {
             style={{ width: "100%", height: "100%" }}
           />
         </View>
-        <Text style={styles.alertText}>비어 있는 항목이 있습니다</Text>
+        <Text style={styles.alertText}>{text}</Text>
       </View>
     </Animated.View>
   );
