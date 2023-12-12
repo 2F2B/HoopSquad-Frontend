@@ -152,7 +152,7 @@ const Matching = () => {
                   </Text>
                 </TouchableOpacity>
 
-                {user.Location2 !== null && (
+                {user.Location2.City !== null && (
                   <TouchableOpacity
                     onPress={() => {
                       setNowLocation(user.Location2?.City);
