@@ -5,9 +5,11 @@ import SocketContext from "../../../contexts/SocketContext";
 import Usercontext from "../../../contexts/UserContext";
 import formatDate from "../../../utils/formatDate";
 import { useContext } from "react";
+import HoopSquadFullLogo from "../../../../assets/HoopSquadFullLogo.png";
 
 const ChatRoomItem = ({ item, socketRef }) => {
   const {
+    hostId,
     image,
     lastChatMessage,
     lastChatTime,
@@ -41,6 +43,8 @@ const ChatRoomItem = ({ item, socketRef }) => {
         postingId,
         nickname,
         opponentImage,
+        hostId,
+        postingTitle,
       });
     });
   };
@@ -53,13 +57,21 @@ const ChatRoomItem = ({ item, socketRef }) => {
       }}
     >
       <View style={styles.imgWrapper}>
-        <Image
-          resizeMode="cover"
-          source={{
-            uri: `${REACT_APP_PROXY}image/user/${image}`,
-          }}
-          style={{ width: "100%", height: "100%" }}
-        />
+        {image ? (
+          <Image
+            resizeMode="cover"
+            source={{
+              uri: `${REACT_APP_PROXY}image/user/${image}`,
+            }}
+            style={{ width: "100%", height: "100%" }}
+          />
+        ) : (
+          <Image
+            resizeMode="cover"
+            source={HoopSquadFullLogo}
+            style={{ width: "100%", height: "100%" }}
+          />
+        )}
       </View>
       <View style={styles.chatContent}>
         <View style={styles.chatLayout}>

@@ -13,12 +13,14 @@ import ChatRoomItem from "./components/ChatRoomItem";
 import { useContext, useEffect } from "react";
 import Usercontext from "../../contexts/UserContext";
 import SocketContext from "../../contexts/SocketContext";
+import { useIsFocused } from "@react-navigation/native";
 
 const ChatList = () => {
   const navigation = useNavigation();
 
   const { user } = useContext(Usercontext);
   const { socketRef, chatRooms, setChatRooms } = useContext(SocketContext);
+  const isFoucsed = useIsFocused();
 
   useEffect(() => {
     const userId = user.User_id;
@@ -26,7 +28,7 @@ const ChatList = () => {
     socketRef.current.emit("joinAllRooms", userId, (chatRooms) => {
       setChatRooms(chatRooms);
     });
-  }, []);
+  }, [isFoucsed]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -40,10 +42,12 @@ const ChatList = () => {
       </View>
       <FlatList
         data={chatRooms}
+        style={styles.chatList}
         keyExtractor={(item) => item.roomId}
         renderItem={({ item }) => (
           <ChatRoomItem item={item} socketRef={socketRef} />
         )}
+        contentContainerStyle={{ paddingBottom: 65 }}
       />
       <NavigationBar />
     </SafeAreaView>

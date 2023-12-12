@@ -16,12 +16,16 @@ import SocketContext from "../../contexts/SocketContext";
 import Usercontext from "../../contexts/UserContext";
 import ChatItem from "./components/ChatItem";
 import HoopSquadFullLogo from "../../../assets/HoopSquadFullLogo.png";
+import { useNavigation } from "@react-navigation/native";
+import Dialog from "./components/Dialog";
 
-const ChatRoom = ({ route, navigation }) => {
-  const { roomId, postingId, nickname, opponentImage } = route.params;
+const ChatRoom = ({ route }) => {
+  const { hostId, roomId, postingId, nickname, opponentImage, postingTitle } =
+    route.params;
   const { socketRef, chatList } = useContext(SocketContext);
   const { user } = useContext(Usercontext);
   const [message, setMessage] = useState("");
+  const navigation = useNavigation();
   const flatListRef = useRef(null);
 
   useEffect(() => {
@@ -79,7 +83,12 @@ const ChatRoom = ({ route, navigation }) => {
           <Text style={styles.headerLeftChildText}>{nickname}</Text>
         </View>
       </View>
-
+      <Dialog
+        postingTitle={postingTitle}
+        postingId={postingId}
+        hostId={hostId}
+        roomId={roomId}
+      />
       <FlatList
         ref={flatListRef}
         style={styles.chatContent}

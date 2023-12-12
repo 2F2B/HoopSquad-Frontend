@@ -58,9 +58,10 @@ const MatchDetail = ({ route }) => {
     const roomId = matchInfo.roomId;
     const userId = user.User_id;
     const nickname = matchInfo.postWriterNickname;
+    const postingTitle = matchInfo.Title;
 
     if (roomId && userId) {
-      enterRoom(roomId, userId, nickname);
+      enterRoom(roomId, userId, nickname, postingTitle);
     } else {
       const opponentImage =
         matchInfo?.Image.length > 0 ? matchInfo.Image[0].ImageData : null;
@@ -74,14 +75,16 @@ const MatchDetail = ({ route }) => {
         guestId,
         postingId,
         nickname,
+        postingTitle,
       });
     }
   };
 
-  const enterRoom = (roomId, userId, nickname) => {
+  const enterRoom = (roomId, userId, nickname, postingTitle) => {
     socketRef.current.emit("enterRoom", roomId, userId, (chatInfo) => {
       const chatList = chatInfo.chatList;
       const opponentImage = chatInfo.opponentImageName;
+      const hostId = matchInfo.User_id;
       setChatList((prevChatList) => ({
         ...prevChatList,
         [roomId]: chatList,
@@ -91,6 +94,8 @@ const MatchDetail = ({ route }) => {
         postingId,
         nickname,
         opponentImage,
+        hostId,
+        postingTitle,
       });
     });
   };
