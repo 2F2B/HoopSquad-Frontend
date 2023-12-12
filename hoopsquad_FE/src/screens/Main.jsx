@@ -26,9 +26,14 @@ const Main = () => {
   const [locationModal, setLocationModal] = useState(false);
   const [nowLocation, setNowLocation] = useState(user.Location1?.City);
 
+  const [locationAlert, setLocationAlert] = useState();
+
   useEffect(() => {
     if (user.User_id && expoPushToken) {
       sendPushToken();
+    }
+    if (user.Location1.City === null) {
+      setLocationAlert(true);
     }
   }, []);
 
@@ -45,6 +50,7 @@ const Main = () => {
       console.error(error);
     }
   };
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -83,7 +89,7 @@ const Main = () => {
                 if (user.Location2?.City !== null) {
                   setLocationModal((prevLocationModal) => !prevLocationModal);
                 } else {
-                  navigation.navigate("MyLocation");
+                  navigation.navigate("MyLocation", { team: false });
                 }
               }}
               style={{ flexDirection: "row", alignItems: "center" }}
@@ -158,7 +164,9 @@ const Main = () => {
 
               {user.Location2?.City !== null && (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate("MyLocation")}
+                  onPress={() =>
+                    navigation.navigate("MyLocation", { team: false })
+                  }
                 >
                   <Text
                     style={{ fontSize: 18, fontWeight: 700, color: "#CDCDCD" }}

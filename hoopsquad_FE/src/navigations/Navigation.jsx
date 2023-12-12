@@ -22,7 +22,8 @@ import ProfileRegister from "../screens/ProfileRegister/ProfileRegister";
 import MyProfile from "../screens/Profile/MyProfile";
 import MyLocation from "../screens/MyLocation";
 import Team from "../screens/Team/Team";
-
+import TeamProfile from "../screens/Profile/TeamProfile";
+import TeamRegister from "../screens/Team/TeamRegister";
 const Navigation = () => {
   const { user, setUser } = useContext(Usercontext);
   const Stack = createNativeStackNavigator();
@@ -132,6 +133,18 @@ const Navigation = () => {
         <Stack.Screen
           name="MyLocation"
           component={MyLocation}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="TeamProfile"
+          component={TeamProfile}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="TeamRegister"
+          component={TeamRegister}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

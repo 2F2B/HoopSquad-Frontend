@@ -11,6 +11,8 @@ import Main from "../../assets/Main.png";
 const NavigationBar = (props) => {
   const navigation = useNavigation();
   const { user } = useContext(Usercontext);
+  const currentScreen =
+    navigation.getState().routes[navigation.getState().index].name;
 
   return (
     <View
@@ -21,62 +23,117 @@ const NavigationBar = (props) => {
       ]}
     >
       <TouchableOpacity
-        style={styles.navigationBox}
+        style={[
+          styles.navigationBox,
+          {
+            borderBottomWidth: currentScreen === "Team" ? 1.5 : 0,
+            borderColor: currentScreen === "Team" ? "#F3A241" : "transparent",
+          },
+        ]}
         onPress={() => navigation.navigate("Team")}
         disabled={props.touchable}
       >
-        <Image
-          source={Team}
-          resizeMode="contain"
-          style={styles.navigationImg}
-        ></Image>
+        <View
+          style={{
+            height: "60%",
+            width: "100%",
+            marginBottom: 5,
+          }}
+        >
+          <Image
+            source={Team}
+            resizeMode="contain"
+            style={styles.navigationImg}
+          ></Image>
+        </View>
+
         <Text>팀</Text>
       </TouchableOpacity>
       <TouchableOpacity
-        style={styles.navigationBox}
+        style={[
+          styles.navigationBox,
+          {
+            borderBottomWidth: currentScreen === "ChatList" ? 1.5 : 0,
+            borderColor:
+              currentScreen === "ChatList" ? "#F3A241" : "transparent",
+          },
+        ]}
         onPress={() => navigation.navigate("ChatList")}
         disabled={props.touchable}
       >
-        <Image
-          source={Chat}
-          resizeMode="contain"
-          style={styles.navigationImg}
-        ></Image>
+        <View style={{ height: "60%", width: "100%", marginBottom: 5 }}>
+          <Image
+            source={Chat}
+            resizeMode="contain"
+            style={styles.navigationImg}
+          ></Image>
+        </View>
+
         <Text>채팅</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.navigationBox}
+        style={[
+          styles.navigationBox,
+          {
+            borderBottomWidth: currentScreen === "Main" ? 1.5 : 0,
+            borderColor: currentScreen === "Main" ? "#F3A241" : "transparent",
+          },
+        ]}
         onPress={() => navigation.navigate("Main")}
         disabled={props.touchable}
       >
-        <Image
-          source={Main}
-          resizeMode="contain"
-          style={styles.navigationImg}
-        ></Image>
+        <View style={{ height: "60%", width: "100%", marginBottom: 5 }}>
+          <Image
+            source={Main}
+            resizeMode="contain"
+            style={styles.navigationImg}
+          ></Image>
+        </View>
+
         <Text>메인</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.navigationBox}
+        style={[
+          styles.navigationBox,
+          {
+            borderBottomWidth: currentScreen === "Match" ? 1.5 : 0,
+            borderColor: currentScreen === "Match" ? "#F3A241" : "transparent",
+          },
+        ]}
         onPress={() => navigation.navigate("Match")}
         disabled={props.touchable}
       >
-        <Image
-          source={Matching}
-          resizeMode="contain"
-          style={styles.navigationImg}
-        ></Image>
+        <View style={{ height: "60%", width: "100%", marginBottom: 5 }}>
+          <Image
+            source={Matching}
+            resizeMode="contain"
+            style={styles.navigationImg}
+          ></Image>
+        </View>
+
         <Text>매칭</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.navigationBox} disabled={props.touchable}>
-        <Image
-          source={BasketBallCourt}
-          resizeMode="contain"
-          style={styles.navigationImg}
-        ></Image>
+      <TouchableOpacity
+        style={[
+          styles.navigationBox,
+          {
+            borderBottomWidth: currentScreen === "aa" ? 1.5 : 0,
+            borderColor: currentScreen === "aa" ? "#F3A241" : "transparent",
+          },
+        ]}
+        disabled={props.touchable}
+      >
+        <View style={{ height: "60%", width: "100%", marginBottom: 5 }}>
+          <Image
+            source={BasketBallCourt}
+            resizeMode="contain"
+            style={styles.navigationImg}
+          ></Image>
+        </View>
+
         <Text>농구장</Text>
       </TouchableOpacity>
     </View>
@@ -98,9 +155,9 @@ const styles = StyleSheet.create({
     height: 65,
   },
   navigationBox: {
-    height: 35,
     width: "20%",
     alignItems: "center",
+    paddingBottom: 5,
   },
   navigationImg: {
     width: "100%",

@@ -10,22 +10,26 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import locationConfig from "../components/locationConfig";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import Usercontext from "../contexts/UserContext";
 import authApi from "../apis/authApi";
 import { REACT_APP_PROXY } from "@env";
+import Locationcontext from "../contexts/LocationContext";
 
-const MyLocation = () => {
+const MyLocation = ({ route }) => {
+  const { team } = route.params;
   const navigation = useNavigation();
   const { user, setUser } = useContext(Usercontext);
+  const { setTeamFirstLocation, setTeamSecondLocation } =
+    useContext(Locationcontext);
   const [startLocation, setStartLocation] = useState("강원도");
   const [firstLocation, setFirstLocation] = useState({
-    location: user.Location1.location,
-    City: user.Location1.City,
+    location: team ? null : user.Location1.location,
+    City: team ? null : user.Location1.City,
   });
   const [secondLocation, setSecondLocation] = useState({
-    location: user.Location2.location,
-    City: user.Location2.City,
+    location: team ? null : user.Location2.location,
+    City: team ? null : user.Location2.City,
   });
 
   const regions = Object.keys(locationConfig);
@@ -84,8 +88,10 @@ const MyLocation = () => {
         <View style={styles.headerTextWrapper}>
           <TouchableOpacity
             onPress={() => {
-              if (firstLocation.City !== null) {
-                navigation.navigate("Main");
+              {
+                team
+                  ? navigation.goBack()
+                  : firstLocation.City !== null && navigation.navigate("Main");
               }
             }}
           >
@@ -102,19 +108,35 @@ const MyLocation = () => {
           <TouchableOpacity
             onPress={() => {
               if (firstLocation.City !== null) {
-                setUser((prevUser) => ({
-                  ...prevUser,
-                  Location1: {
-                    location: firstLocation.location,
-                    City: firstLocation.City,
-                  },
-                  Location2: {
-                    location: secondLocation.location,
-                    City: secondLocation.City,
-                  },
-                }));
-                locationRegister();
-                navigation.navigate("Main");
+                team
+                  ? (() => {
+                      setTeamFirstLocation((prevLocation) => ({
+                        ...prevLocation,
+                        location: firstLocation.location,
+                        City: firstLocation.City,
+                      }));
+                      setTeamSecondLocation((prevLocation) => ({
+                        ...prevLocation,
+                        location: secondLocation.location,
+                        City: secondLocation.City,
+                      }));
+                      navigation.goBack();
+                    })()
+                  : (() => {
+                      setUser((prevUser) => ({
+                        ...prevUser,
+                        Location1: {
+                          location: firstLocation.location,
+                          City: firstLocation.City,
+                        },
+                        Location2: {
+                          location: secondLocation.location,
+                          City: secondLocation.City,
+                        },
+                      }));
+                      locationRegister();
+                      navigation.navigate("Main");
+                    })();
               }
             }}
           >
@@ -198,6 +220,10 @@ const MyLocation = () => {
       </View>
     </SafeAreaView>
   );
+};
+
+MyLocation.defaultProps = {
+  team: false,
 };
 
 const styles = StyleSheet.create({
