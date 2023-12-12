@@ -1,25 +1,70 @@
 import { Text, View, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import formatDate from "../../../utils/formatDate";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useContext, useState } from "react";
+import Usercontext from "../../../contexts/UserContext";
 
-const NotificationItem = ({ item, type }) => {
+const NotificationItem = ({ item }) => {
   const {
     createdAt,
     guestId,
     image,
+    hostId,
     isApply,
     nickname,
     postingId,
     postingTitle,
+    roomId,
+    type,
   } = item;
 
+  const navigation = useNavigation();
+
+  const navigateToChatroom = () => {
+    navigation.navigate("ChatRoom", {
+      hostId,
+      roomId,
+      postingId,
+      nickname,
+      image,
+      postingTitle,
+    });
+  };
+
+  console.log("item : ", item);
+
   return (
-    <TouchableOpacity style={styles.notification}>
+    <TouchableOpacity
+      style={styles.notification}
+      onPress={() => {
+        navigateToChatroom();
+      }}
+    >
       <View style={styles.notificationTitle}>
-        <Text style={styles.nickname}>테스트</Text>
-        <Text> 님에게 매칭 요청이 왔습니다</Text>
+        <MaterialCommunityIcons
+          name="basketball-hoop-outline"
+          size={20}
+          color="#F3A241"
+        />
+        {type === "host" ? (
+          <>
+            <Text style={styles.nickname}>{nickname}</Text>
+            <Text> 님에게 매칭 참여 요청이 왔습니다</Text>
+          </>
+        ) : isApply === true ? (
+          <>
+            <Text style={styles.nickname}>{postingTitle}</Text>
+            <Text> 매칭 참여가 수락되었습니다</Text>
+          </>
+        ) : (
+          <>
+            <Text style={styles.nickname}>{postingTitle}</Text>
+            <Text> 매칭 참여가 거절되었습니다</Text>
+          </>
+        )}
       </View>
-      <Text style={styles.timeFont}>2023년 11월 11일 오후 8:30</Text>
+      <Text style={styles.timeFont}>{formatDate(createdAt)}</Text>
     </TouchableOpacity>
   );
 };
@@ -38,6 +83,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   nickname: {
+    marginLeft: 6,
     fontSize: 16,
     fontWeight: "bold",
   },
