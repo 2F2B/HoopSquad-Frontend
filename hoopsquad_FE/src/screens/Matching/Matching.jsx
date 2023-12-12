@@ -40,7 +40,7 @@ const Matching = () => {
   const isFocused = useIsFocused();
 
   const [locationModal, setLocationModal] = useState(false);
-  const [nowLocation, setNowLocation] = useState(user.Location1.City);
+  const [nowLocation, setNowLocation] = useState(user.Location1?.City);
 
   const Sorts = [
     { label: "작성 날짜", value: "WriteDate" },
@@ -80,286 +80,267 @@ const Matching = () => {
       behavior="height"
       keyboardVerticalOffset={-60}
     >
-      <SafeAreaView
-        style={[
-          { flex: 1 },
-          filter && { backgroundColor: "rgba(0, 0, 0, 0.15)" },
-          locationModal && { backgroundColor: "rgba(0, 0, 0, 0.5)" },
-        ]}
-      >
-        <StatusBar style="dark" />
+      <StatusBar style="dark" />
 
-        <View
+      <TouchableOpacity
+        style={{ flex: 1 }}
+        onPress={() => setLocationModal(false)}
+        disabled={!locationModal}
+      >
+        <SafeAreaView
           style={[
-            styles.header,
-            {
-              borderBottomColor:
-                filter || locationModal ? "rgba(0, 0, 0, 0.5)" : "#E2E2E2",
-            },
+            { flex: 1 },
+            filter && { backgroundColor: "rgba(0, 0, 0, 0.15)" },
+            locationModal && { backgroundColor: "rgba(0, 0, 0, 0.5)" },
           ]}
         >
           <View
-            style={{
-              height: "100%",
-              width: "30%",
-            }}
+            style={[
+              styles.header,
+              {
+                borderBottomColor:
+                  filter || locationModal ? "rgba(0, 0, 0, 0.5)" : "#E2E2E2",
+              },
+            ]}
           >
-            <TouchableOpacity
-              onPress={() => {
-                if (user.Location2.City !== null) {
-                  setLocationModal((prevLocationModal) => !prevLocationModal);
-                } else {
-                  navigation.navigate("MyLocation");
-                }
-              }}
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
-              <Text style={{ fontSize: 20, fontWeight: 700, marginRight: 5 }}>
-                {nowLocation}
-              </Text>
-              <AntDesign
-                name="down"
-                size={24}
-                color="black"
-                style={{ marginTop: 5 }}
-              />
-            </TouchableOpacity>
-          </View>
-          {locationModal && (
             <View
               style={{
-                position: "absolute",
-                top: 60,
-                left: 20,
-                width: "50%",
-                paddingHorizontal: 15,
-                paddingVertical: 15,
-                backgroundColor: "white",
-                borderRadius: 15,
+                height: "100%",
+                width: "30%",
               }}
             >
               <TouchableOpacity
                 onPress={() => {
-                  setNowLocation(user.Location1?.City);
-                  setActivityLocation(
-                    `${user.Location1.location} ${user.Location1.City}`
-                  );
-                  setLocationModal(false);
+                  setLocationModal((prevLocationModal) => !prevLocationModal);
                 }}
+                style={{ flexDirection: "row", alignItems: "center" }}
               >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: 700,
-                    color:
-                      user.Location1?.City === nowLocation
-                        ? "black"
-                        : "#CDCDCD",
-                    marginBottom: 20,
-                  }}
-                >
-                  {user.Location1?.City}
+                <Text style={{ fontSize: 20, fontWeight: 700, marginRight: 5 }}>
+                  {nowLocation}
                 </Text>
+                <AntDesign
+                  name="down"
+                  size={24}
+                  color="black"
+                  style={{ marginTop: 5 }}
+                />
               </TouchableOpacity>
-
-              {user.Location2 !== null && (
+            </View>
+            {locationModal && (
+              <View style={styles.locationModalWrapper}>
                 <TouchableOpacity
                   onPress={() => {
-                    setNowLocation(user.Location2?.City);
+                    setNowLocation(user.Location1?.City);
                     setActivityLocation(
-                      `${user.Location2.location} ${user.Location2.City}`
+                      `${user.Location1.location} ${user.Location1.City}`
                     );
                     setLocationModal(false);
                   }}
                 >
                   <Text
-                    style={{
-                      fontSize: 18,
-                      fontWeight: 700,
-                      color:
-                        user.Location2?.City === nowLocation
-                          ? "black"
-                          : "#CDCDCD",
-                      marginBottom: 20,
+                    style={[
+                      styles.locationModalText,
+                      {
+                        color:
+                          user.Location1?.City === nowLocation
+                            ? "black"
+                            : "#CDCDCD",
+                      },
+                    ]}
+                  >
+                    {user.Location1?.City}
+                  </Text>
+                </TouchableOpacity>
+
+                {user.Location2 !== null && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setNowLocation(user.Location2?.City);
+                      setActivityLocation(
+                        `${user.Location2.location} ${user.Location2.City}`
+                      );
+                      setLocationModal(false);
                     }}
                   >
-                    {user.Location2.City}
-                  </Text>
-                </TouchableOpacity>
-              )}
-
-              {user.Location2.City !== null && (
-                <TouchableOpacity
-                  onPress={() => navigation.navigate("MyLocation")}
-                >
-                  <Text
-                    style={{ fontSize: 18, fontWeight: 700, color: "#CDCDCD" }}
-                  >
-                    내 동네 설정
-                  </Text>
-                </TouchableOpacity>
-              )}
-            </View>
-          )}
-        </View>
-
-        <View style={styles.matchingContainer}>
-          <Text style={styles.matchingTitle}>매칭</Text>
-          <Text style={styles.matchingSubTitle}>오늘 한 번 활약해볼까요?</Text>
-          <View style={styles.location}>
-            <Entypo
-              name="magnifying-glass"
-              size={15}
-              color="black"
-              style={[styles.searchIcon]}
-            />
-
-            <TextInput
-              placeholder="제목으로 검색해주세요"
-              style={[styles.input, { borderColor: "rgba(0, 0, 0, 0.1)" }]}
-              onChangeText={searchTitle}
-              editable={!locationModal}
-            ></TextInput>
-          </View>
-
-          <View style={styles.filterWrapper}>
-            <View style={[styles.dropDownFilter]}>
-              <DropDownPicker
-                disabled={locationModal}
-                open={showDropDownSort && !locationModal}
-                value={selectSort}
-                items={Sorts}
-                setOpen={(value) => setShowDropDownSort(value)}
-                setValue={setSelectSort}
-                placeholder="작성 날짜"
-                textStyle={styles.dropDownText}
-                style={[
-                  styles.dropDown,
-                  locationModal && {
-                    backgroundColor: "rgba(0, 0, 0, 0.01)",
-                    borderColor: "rgba(0, 0, 0, 0.1)",
-                  },
-                ]}
-                dropDownContainerStyle={styles.dropDownContainer}
-                listParentContainerStyle={styles.dropDownListParentContainer}
-                listParentLabelStyle={styles.dropDownListParentLabel}
-              />
-            </View>
-
-            <TouchableOpacity
-              onPress={() => setFilter(true)}
-              style={[
-                styles.filter,
-                { width: 70, borderColor: "rgba(0, 0, 0, 0.1)" },
-              ]}
-              disabled={locationModal}
-            >
-              <Text style={styles.filterPage}>필터</Text>
-              <Foundation
-                style={{ marginTop: 3 }}
-                name="filter"
-                size={10}
-                color="black"
-              />
-            </TouchableOpacity>
-          </View>
-          <View style={{ height: "70%" }}>
-            <ScrollView>
-              {matchData?.map((data, index) => {
-                const postingId = data.Posting_id;
-
-                return (
-                  <TouchableOpacity
-                    key={index}
-                    onPress={() =>
-                      navigation.navigate("MatchDetail", { postingId })
-                    }
-                    disabled={locationModal}
-                  >
-                    <Match
-                      Title={data.Title}
-                      gameType={data.GameType}
-                      currentAmount={data.CurrentAmount}
-                      recruitAmount={data.RecruitAmount}
-                      Location={data.Location}
-                      writeDate={data.WriteDate}
-                      Images={data.Image[0]}
-                      opacity={locationModal}
-                    />
+                    <Text
+                      style={[
+                        styles.locationModalText,
+                        {
+                          color:
+                            user.Location2?.City === nowLocation
+                              ? "black"
+                              : "#CDCDCD",
+                        },
+                      ]}
+                    >
+                      {user.Location2?.City}
+                    </Text>
                   </TouchableOpacity>
-                );
-              })}
-            </ScrollView>
-            <View style={[styles.registerButton]}>
+                )}
+              </View>
+            )}
+          </View>
+
+          <View style={styles.matchingContainer}>
+            <Text style={styles.matchingTitle}>매칭</Text>
+            <Text style={styles.matchingSubTitle}>
+              오늘 한 번 활약해볼까요?
+            </Text>
+            <View style={styles.location}>
+              <Entypo
+                name="magnifying-glass"
+                size={15}
+                color="black"
+                style={[styles.searchIcon]}
+              />
+
+              <TextInput
+                placeholder="제목으로 검색해주세요"
+                style={[styles.input, { borderColor: "rgba(0, 0, 0, 0.1)" }]}
+                onChangeText={searchTitle}
+                editable={!locationModal}
+              ></TextInput>
+            </View>
+
+            <View style={styles.filterWrapper}>
+              <View style={[styles.dropDownFilter]}>
+                <DropDownPicker
+                  disabled={locationModal}
+                  open={showDropDownSort && !locationModal}
+                  value={selectSort}
+                  items={Sorts}
+                  setOpen={(value) => setShowDropDownSort(value)}
+                  setValue={setSelectSort}
+                  placeholder="작성 날짜"
+                  textStyle={styles.dropDownText}
+                  style={[
+                    styles.dropDown,
+                    locationModal && {
+                      backgroundColor: "rgba(0, 0, 0, 0.01)",
+                      borderColor: "rgba(0, 0, 0, 0.1)",
+                    },
+                  ]}
+                  dropDownContainerStyle={styles.dropDownContainer}
+                  listParentContainerStyle={styles.dropDownListParentContainer}
+                  listParentLabelStyle={styles.dropDownListParentLabel}
+                />
+              </View>
+
               <TouchableOpacity
+                onPress={() => setFilter(true)}
+                style={[
+                  styles.filter,
+                  { width: 70, borderColor: "rgba(0, 0, 0, 0.1)" },
+                ]}
                 disabled={locationModal}
-                onPress={() => navigation.navigate("MatchRegister")}
               >
-                <AntDesign
-                  name="pluscircle"
-                  size={35}
-                  color={locationModal ? "rgba(0, 0, 0, 0.1)" : "#F3A241"}
+                <Text style={styles.filterPage}>필터</Text>
+                <Foundation
+                  style={{ marginTop: 3 }}
+                  name="filter"
+                  size={10}
+                  color="black"
                 />
               </TouchableOpacity>
             </View>
-          </View>
-        </View>
-        <NavigationBar opacity={locationModal} />
+            <View style={{ height: "70%" }}>
+              <ScrollView>
+                {matchData?.map((data, index) => {
+                  const postingId = data.Posting_id;
 
-        {filter && (
-          <View style={styles.filterPageWrapper}>
-            <TouchableOpacity
-              onPress={() => {
-                setFilter(false);
-              }}
-              style={{ zIndex: 1 }}
-            >
-              <Feather
-                name="x"
-                size={24}
-                color="black"
-                style={styles.CancelButton}
-              />
-            </TouchableOpacity>
-
-            <View>
-              <Text style={styles.filterTitle}>게임 유형</Text>
-              <View style={styles.gameTypeCategory}>
-                <FilterButton
-                  buttonText="1 VS 1"
-                  setGameTypeList={setGameTypeList}
-                  typeName="One"
-                  gameTypeList={gameTypeList.One}
-                ></FilterButton>
-
-                <FilterButton
-                  buttonText="3 VS 3"
-                  setGameTypeList={setGameTypeList}
-                  typeName="Three"
-                  gameTypeList={gameTypeList.Three}
-                ></FilterButton>
-
-                <FilterButton
-                  buttonText="5 VS 5"
-                  setGameTypeList={setGameTypeList}
-                  typeName="Five"
-                  gameTypeList={gameTypeList.Five}
-                ></FilterButton>
+                  return (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() =>
+                        navigation.navigate("MatchDetail", { postingId })
+                      }
+                      disabled={locationModal}
+                    >
+                      <Match
+                        Title={data.Title}
+                        gameType={data.GameType}
+                        currentAmount={data.CurrentAmount}
+                        recruitAmount={data.RecruitAmount}
+                        Location={data.Location}
+                        writeDate={data.WriteDate}
+                        Images={data.Image[0]}
+                        opacity={locationModal}
+                      />
+                    </TouchableOpacity>
+                  );
+                })}
+              </ScrollView>
+              <View style={[styles.registerButton]}>
+                <TouchableOpacity
+                  disabled={locationModal}
+                  onPress={() => navigation.navigate("MatchRegister")}
+                >
+                  <AntDesign
+                    name="pluscircle"
+                    size={35}
+                    color={locationModal ? "rgba(0, 0, 0, 0.1)" : "#F3A241"}
+                  />
+                </TouchableOpacity>
               </View>
             </View>
-            <View style={styles.applyFilter}>
+          </View>
+          <NavigationBar opacity={locationModal} touchable={locationModal} />
+
+          {filter && (
+            <View style={styles.filterPageWrapper}>
               <TouchableOpacity
                 onPress={() => {
                   setFilter(false);
-                  searchGameType();
                 }}
+                style={{ zIndex: 1 }}
               >
-                <Text style={styles.applyFilterText}>적용하기</Text>
+                <Feather
+                  name="x"
+                  size={24}
+                  color="black"
+                  style={styles.CancelButton}
+                />
               </TouchableOpacity>
+
+              <View>
+                <Text style={styles.filterTitle}>게임 유형</Text>
+                <View style={styles.gameTypeCategory}>
+                  <FilterButton
+                    buttonText="1 VS 1"
+                    setGameTypeList={setGameTypeList}
+                    typeName="One"
+                    gameTypeList={gameTypeList.One}
+                  ></FilterButton>
+
+                  <FilterButton
+                    buttonText="3 VS 3"
+                    setGameTypeList={setGameTypeList}
+                    typeName="Three"
+                    gameTypeList={gameTypeList.Three}
+                  ></FilterButton>
+
+                  <FilterButton
+                    buttonText="5 VS 5"
+                    setGameTypeList={setGameTypeList}
+                    typeName="Five"
+                    gameTypeList={gameTypeList.Five}
+                  ></FilterButton>
+                </View>
+              </View>
+              <View style={styles.applyFilter}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFilter(false);
+                    searchGameType();
+                  }}
+                >
+                  <Text style={styles.applyFilterText}>적용하기</Text>
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
-        )}
-      </SafeAreaView>
+          )}
+        </SafeAreaView>
+      </TouchableOpacity>
     </KeyboardAvoidingView>
   );
 };
@@ -524,6 +505,23 @@ const styles = StyleSheet.create({
   dropDownListParentLabel: {
     textAlign: "left",
     paddingLeft: 10,
+  },
+
+  locationModalWrapper: {
+    position: "absolute",
+    top: 60,
+    left: 20,
+    width: "50%",
+    paddingHorizontal: 15,
+    paddingVertical: 15,
+    backgroundColor: "white",
+    borderRadius: 15,
+  },
+  locationModalText: {
+    fontSize: 18,
+    fontWeight: 700,
+    marginTop: 10,
+    marginBottom: 10,
   },
 });
 export default Matching;
