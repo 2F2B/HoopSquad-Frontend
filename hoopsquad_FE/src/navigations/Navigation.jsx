@@ -56,19 +56,16 @@ const Navigation = () => {
       <Stack.Navigator
         screenOptions={{ contentStyle: { backgroundColor: "white" } }}
       >
-        {!user && <Stack.Screen name="Login" component={Login} />}
-        {user && user.Location1.City === null && (
+        {user ? (
           <Stack.Screen
-            name="MyLocation"
-            component={MyLocation}
+            name="Main"
+            component={Main}
             options={{ headerShown: false }}
           />
+        ) : (
+          <Stack.Screen name="Login" component={Login} />
         )}
-        <Stack.Screen
-          name="Main"
-          component={Main}
-          options={{ headerShown: false }}
-        />
+
         <Stack.Screen
           name="Match"
           component={Matching}
@@ -129,6 +126,12 @@ const Navigation = () => {
         <Stack.Screen
           name="Team"
           component={Team}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="MyLocation"
+          component={MyLocation}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
