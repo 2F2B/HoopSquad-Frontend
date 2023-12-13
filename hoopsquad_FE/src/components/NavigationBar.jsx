@@ -7,6 +7,7 @@ import Chat from "../../assets/Chat.png";
 import Matching from "../../assets/Matching.png";
 import BasketBallCourt from "../../assets/BasketBallCourt.png";
 import Main from "../../assets/Main.png";
+import Profile from "../../assets/Profile.png";
 
 const NavigationBar = (props) => {
   const navigation = useNavigation();
@@ -120,21 +121,25 @@ const NavigationBar = (props) => {
         style={[
           styles.navigationBox,
           {
-            borderBottomWidth: currentScreen === "aa" ? 1.5 : 0,
-            borderColor: currentScreen === "aa" ? "#F3A241" : "transparent",
+            borderBottomWidth: currentScreen === "MyProfile" ? 1.5 : 0,
+            borderColor:
+              currentScreen === "MyProfile" ? "#F3A241" : "transparent",
           },
         ]}
+        onPress={() =>
+          navigation.navigate("MyProfile", { profileId: user.User_id })
+        }
         disabled={props.touchable}
       >
         <View style={{ height: "60%", width: "100%", marginBottom: 5 }}>
           <Image
-            source={BasketBallCourt}
+            source={Profile}
             resizeMode="contain"
             style={styles.navigationImg}
           ></Image>
         </View>
 
-        <Text>농구장</Text>
+        <Text>프로필</Text>
       </TouchableOpacity>
     </View>
   );
