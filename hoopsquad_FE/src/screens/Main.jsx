@@ -38,7 +38,6 @@ const Main = () => {
   const [locationAlert, setLocationAlert] = useState();
   const [weatherInfo, setWeatherInfo] = useState(null);
   const [deadLineList, setDeadLineList] = useState(null);
-
   useEffect(() => {
     if (user.User_id && expoPushToken) {
       sendPushToken();
@@ -50,6 +49,13 @@ const Main = () => {
     getWeatherInfo();
     getDeadlineInfo();
   }, []);
+
+  useEffect(() => {
+    if (user.Location1) {
+      getWeatherInfo();
+      getDeadlineInfo();
+    }
+  }, [user.Location1]);
 
   const getWeatherInfo = async () => {
     const location = user.Location1.location;
@@ -282,64 +288,16 @@ const Main = () => {
             )}
             <View style={{ flexDirection: "row", alignItems: "center" }}>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("MyProfile", { profileId: user.User_id })
-                }
-                disabled={locationModal || locationAlert}
-              >
-                <View
-                  style={[
-                    styles.userImageWrapper,
-                    {
-                      borderColor:
-                        locationModal || locationAlert
-                          ? "rgba(0, 0, 0, 0.1)"
-                          : "#E2E2E2",
-                    },
-                  ]}
-                >
-                  {user.Image.length > 0 ? (
-                    user.Image[0].ImageData.startsWith("file://") ? (
-                      <Image
-                        source={{ uri: user.Image[0].ImageData }}
-                        style={[
-                          { width: "100%", height: "100%" },
-                          (locationModal || locationAlert) && { opacity: 0.2 },
-                        ]}
-                      />
-                    ) : (
-                      <Image
-                        resizeMode="cover"
-                        source={{
-                          uri: `${REACT_APP_PROXY}image/user/${user.Image[0].ImageData}`,
-                        }}
-                        style={[
-                          { width: "100%", height: "100%" },
-                          (locationModal || locationAlert) && { opacity: 0.1 },
-                        ]}
-                      ></Image>
-                    )
-                  ) : (
-                    <Image
-                      resizeMode="cover"
-                      source={HoopSquadFullLogo}
-                      style={[
-                        { width: "100%", height: "100%" },
-                        (locationModal || locationAlert) && { opacity: 0.1 },
-                      ]}
-                    ></Image>
-                  )}
-                </View>
-              </TouchableOpacity>
-
-              <TouchableOpacity
                 style={{ marginLeft: 8 }}
                 onPress={() => navigation.navigate("Notification")}
                 disabled={locationModal || locationAlert}
               >
                 <Feather name="bell" size={25} color="black" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => logout()}>
+              <TouchableOpacity
+                onPress={() => logout()}
+                disabled={locationModal || locationAlert}
+              >
                 <MaterialIcons
                   style={{ marginLeft: 20 }}
                   name="logout"
@@ -503,11 +461,15 @@ const Main = () => {
                   "https://www.koreabasketball.or.kr/game/dom_schedule.php"
                 );
               }}
+              disabled={locationModal || locationAlert}
             >
               <Image
                 resizeMode="cover"
                 source={compete}
-                style={styles.competeImageStyle}
+                style={[
+                  styles.competeImageStyle,
+                  (locationModal || locationAlert) && { opacity: 0.2 },
+                ]}
               />
             </TouchableOpacity>
           </ScrollView>
