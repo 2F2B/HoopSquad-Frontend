@@ -338,11 +338,11 @@ const MyProfile = ({ route }) => {
               Image={profile_Location}
               Title={"활동 지역"}
               Text={`${
-                profileInfo?.Location1 != null
+                profileInfo?.Location1.City != null
                   ? `${profileInfo?.Location1.location} ${profileInfo?.Location1.City}`
                   : ""
               } ${
-                profileInfo?.Location2 != null
+                profileInfo?.Location2.City != null
                   ? `/ ${profileInfo?.Location2.location} ${profileInfo?.Location2.City}`
                   : ""
               }`}
@@ -366,7 +366,7 @@ const MyProfile = ({ route }) => {
           </View>
           <View style={{ paddingBottom: 80, marginTop: 20 }}>
             {/* 후기 있음 */}
-            {test.length > 0 ? (
+            {test.length < 0 ? (
               <ScrollView
                 horizontal
                 pagingEnabled
