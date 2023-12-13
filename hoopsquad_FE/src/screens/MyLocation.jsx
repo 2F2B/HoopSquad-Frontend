@@ -6,20 +6,26 @@ import {
   ScrollView,
   SafeAreaView,
   StatusBar,
+  Dimensions,
+  Animated,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, AntDesign } from "@expo/vector-icons";
 import locationConfig from "../components/locationConfig";
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useRef } from "react";
 import Usercontext from "../contexts/UserContext";
 import authApi from "../apis/authApi";
 import { REACT_APP_PROXY } from "@env";
 import Locationcontext from "../contexts/LocationContext";
+import InputAlert from "../components/InputAlert";
+import { alertUpward } from "../components/InputAlert";
 
 const MyLocation = ({ route }) => {
   const { team } = route.params;
   const navigation = useNavigation();
   const { user, setUser } = useContext(Usercontext);
+  const { height } = Dimensions.get("window");
+  const translateY = useRef(new Animated.Value(height)).current;
   const { setTeamFirstLocation, setTeamSecondLocation, setNowSelectLocation } =
     useContext(Locationcontext);
   const [startLocation, setStartLocation] = useState("강원도");
@@ -138,6 +144,8 @@ const MyLocation = ({ route }) => {
                       locationRegister();
                       navigation.navigate("Main");
                     })();
+              } else {
+                alertUpward(translateY, height);
               }
             }}
           >
@@ -150,9 +158,15 @@ const MyLocation = ({ route }) => {
         <Text style={styles.matchingSubTitle}>
           활동을 주로 진행할 지역을 선택해주세요
         </Text>
-        <Text>
-          현재 선택 지역 {firstLocation?.City} {secondLocation?.City}
-        </Text>
+        <View style={{ flexDirection: "row" }}>
+          <Text>현재 선택 지역</Text>
+          <Text style={{ color: "#F3A241", marginLeft: 6 }}>
+            {firstLocation?.City}
+          </Text>
+          <Text style={{ color: "#F3A241", marginLeft: 6 }}>
+            {secondLocation?.City}
+          </Text>
+        </View>
       </View>
       <View style={{ flexDirection: "row", flex: 1 }}>
         <ScrollView style={{ flex: 1 }}>
@@ -219,6 +233,7 @@ const MyLocation = ({ route }) => {
           </View>
         </ScrollView>
       </View>
+      <InputAlert translateY={translateY} text={"지역을 설정해주세요"} />
     </SafeAreaView>
   );
 };

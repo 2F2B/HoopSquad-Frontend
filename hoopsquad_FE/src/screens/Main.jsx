@@ -46,20 +46,23 @@ const Main = () => {
       setLocationAlert(true);
     }
     setNowSelectLocation(user.Location1?.City);
-    getWeatherInfo();
-    getDeadlineInfo();
   }, []);
 
   useEffect(() => {
     if (user.Location1) {
+      console.log("ASdsaasd");
       getWeatherInfo();
       getDeadlineInfo();
     }
-  }, [user.Location1]);
+  }, [user.Location1, nowSelectLocation]);
 
   const getWeatherInfo = async () => {
-    const location = user.Location1.location;
-    const city = user.Location1.City;
+    const location =
+      nowSelectLocation === user.Location1.City
+        ? user.Location1.location
+        : user.Location2.location;
+
+    const city = nowSelectLocation;
     try {
       const response = await axios.get(
         `${REACT_APP_PROXY}weather?location=${location}&city=${city}`
@@ -71,7 +74,10 @@ const Main = () => {
   };
 
   const getDeadlineInfo = async () => {
-    const location = user.Location1.location;
+    const location =
+      nowSelectLocation === user.Location1.City
+        ? user.Location1.location
+        : user.Location2.location;
     try {
       const response = await axios.get(
         `${REACT_APP_PROXY}match/deadline/${location}`
@@ -416,7 +422,7 @@ const Main = () => {
                 justifyContent: "space-between",
               }}
             >
-              {deadLineList &&
+              {deadLineList ? (
                 deadLineList.map((deadline, index) => (
                   <TouchableOpacity
                     key={index}
@@ -447,7 +453,20 @@ const Main = () => {
                       {formattedTime(deadline.PlayTime)}
                     </Text>
                   </TouchableOpacity>
-                ))}
+                ))
+              ) : (
+                <View style={{ width: "100%" }}>
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      paddingVertical: 30,
+                      color: "#CDCDCD",
+                    }}
+                  >
+                    현재 지역에 매칭 정보가 없습니다
+                  </Text>
+                </View>
+              )}
             </View>
             <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
               <Text style={styles.mainTitle}>대회정보</Text>

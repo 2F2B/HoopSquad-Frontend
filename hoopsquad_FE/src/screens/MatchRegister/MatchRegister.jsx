@@ -26,6 +26,7 @@ import {
   FontAwesome,
   Entypo,
   Feather,
+  AntDesign,
 } from "@expo/vector-icons";
 import NavigationBar from "../../components/NavigationBar";
 import InputAlert from "../../components/InputAlert";
@@ -231,6 +232,11 @@ const MatchRegister = () => {
       return false;
     }
 
+    if (parseFloat(currentAmount) > parseFloat(recruitAmount)) {
+      setAlertText("현재 인원이 참가 인원 보다 많습니다");
+      return false;
+    }
+
     return true;
   };
 
@@ -344,6 +350,7 @@ const MatchRegister = () => {
                           ? "시간을 선택해주세요"
                           : `${selectHour}시 ${selectMinute}분`}
                       </Text>
+                      <AntDesign name="clockcircleo" size={20} color="black" />
                     </View>
                   </TouchableOpacity>
                   <DateTimePickerModal

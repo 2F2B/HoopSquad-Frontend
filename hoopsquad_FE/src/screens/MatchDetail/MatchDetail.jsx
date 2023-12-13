@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   imgWrapper: {
     width: "100%",
-    height: "25%",
+    height: "20%",
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 15,

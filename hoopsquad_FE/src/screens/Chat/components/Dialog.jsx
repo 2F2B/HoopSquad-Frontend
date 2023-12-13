@@ -66,6 +66,16 @@ const Dialog = ({ postingTitle, postingId, hostId, roomId }) => {
     });
   };
 
+  const TruncateText = ({ originalText, maxLength }) => {
+    let truncatedText = originalText;
+
+    if (originalText.length > maxLength) {
+      truncatedText = `${originalText.substring(0, maxLength)}...`;
+    }
+
+    return <Text style={styles.dialogPostingTitle}>{truncatedText}</Text>;
+  };
+
   return (
     <View style={styles.dialog}>
       <View style={styles.dialogTitleContainer}>
@@ -76,7 +86,7 @@ const Dialog = ({ postingTitle, postingId, hostId, roomId }) => {
               navigation.navigate("MatchDetail", { postingId: postingId })
             }
           >
-            <Text style={styles.dialogPostingTitle}>{postingTitle} </Text>
+            <TruncateText originalText={postingTitle} maxLength={5} />
           </TouchableOpacity>
           <Text style={styles.dialogTitle}>글에 대한 채팅입니다</Text>
         </View>
