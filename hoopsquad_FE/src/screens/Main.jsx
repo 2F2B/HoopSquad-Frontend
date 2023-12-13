@@ -78,9 +78,10 @@ const Main = () => {
       nowSelectLocation === user.Location1.City
         ? user.Location1.location
         : user.Location2.location;
+
     try {
       const response = await axios.get(
-        `${REACT_APP_PROXY}match/deadline/${location}`
+        `${REACT_APP_PROXY}match/deadline/${location} ${nowSelectLocation}`
       );
       setDeadLineList(response.data);
     } catch (error) {
@@ -331,6 +332,8 @@ const Main = () => {
                           weatherInfo && weatherInfo.sunny === "sunny"
                             ? "#80aeea"
                             : "#4e5164",
+
+                        opacity: locationModal || locationAlert ? 0.2 : 1,
                       },
                     ]}
                   >
@@ -432,8 +435,18 @@ const Main = () => {
                       })
                     }
                   >
-                    <View style={styles.deadlineItem}>
-                      <View style={styles.imageContainer}>
+                    <View
+                      style={[
+                        styles.deadlineItem,
+                        {
+                          borderColor:
+                            locationModal || locationAlert
+                              ? "rgba(226, 226, 226, 0.1)"
+                              : "#E2E2E2",
+                        },
+                      ]}
+                    >
+                      <View style={[styles.imageContainer]}>
                         <Image
                           resizeMode="cover"
                           source={
@@ -443,7 +456,12 @@ const Main = () => {
                                 }
                               : HoopSquadFullLogo
                           }
-                          style={styles.imageStyle}
+                          style={[
+                            styles.imageStyle,
+                            {
+                              opacity: locationModal || locationAlert ? 0.2 : 1,
+                            },
+                          ]}
                         />
                       </View>
                     </View>
@@ -669,7 +687,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderWidth: 1,
     borderRadius: 8,
-    borderColor: "#E2E2E2",
     overflow: "hidden",
   },
   imageContainer: {
