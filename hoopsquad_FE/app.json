@@ -4,7 +4,7 @@
     "slug": "hoopsquad_FE",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/HoopSquadLogo.png",
+    "icon": "./assets/HoopSquadIcon.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/SplashImg.png",
