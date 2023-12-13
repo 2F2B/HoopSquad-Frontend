@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   StatusBar,
   Image,
+  ScrollView,
 } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import NavigationBar from "../components/NavigationBar";
@@ -18,6 +19,13 @@ import axios from "axios";
 import { REACT_APP_PROXY } from "@env";
 import { AntDesign, Feather } from "@expo/vector-icons";
 import HoopSquadFullLogo from "../../assets/HoopSquadFullLogo.png";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import sunny from "../../assets/weather/sunny.png";
+import cloudy from "../../assets/weather/cloudy.png";
+import compete from "../../assets/weather/compete.png";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Linking } from "react-native";
 
 const Main = () => {
   const { user, logout } = useContext(Usercontext);
@@ -28,6 +36,8 @@ const Main = () => {
   const [locationModal, setLocationModal] = useState(false);
 
   const [locationAlert, setLocationAlert] = useState();
+  const [weatherInfo, setWeatherInfo] = useState(null);
+  const [deadLineList, setDeadLineList] = useState(null);
 
   useEffect(() => {
     if (user.User_id && expoPushToken) {
@@ -37,7 +47,34 @@ const Main = () => {
       setLocationAlert(true);
     }
     setNowSelectLocation(user.Location1?.City);
+    getWeatherInfo();
+    getDeadlineInfo();
   }, []);
+
+  const getWeatherInfo = async () => {
+    const location = user.Location1.location;
+    const city = user.Location1.City;
+    try {
+      const response = await axios.get(
+        `${REACT_APP_PROXY}weather?location=${location}&city=${city}`
+      );
+      setWeatherInfo(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDeadlineInfo = async () => {
+    const location = user.Location1.location;
+    try {
+      const response = await axios.get(
+        `${REACT_APP_PROXY}match/deadline/${location}`
+      );
+      setDeadLineList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const sendPushToken = async () => {
     try {
@@ -51,6 +88,22 @@ const Main = () => {
     } catch (error) {
       console.error(error);
     }
+  };
+
+  const formattedTime = (timestamp) => {
+    const date = new Date(timestamp * 1000);
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? "오후" : "오전";
+    const hour = hours % 12 === 0 ? 12 : hours % 12;
+    const formattedMonth = month < 10 ? `0${month}` : `${month}`;
+    const formattedDay = day < 10 ? `0${day}` : `${day}`;
+    const formattedHour = hour < 10 ? `0${hour}` : `${hour}`;
+    const formattedMinute = minutes < 10 ? `0${minutes}` : `${minutes}`;
+
+    return `${formattedMonth}.${formattedDay} ${ampm} ${formattedHour}:${formattedMinute}`;
   };
 
   return (
@@ -280,49 +333,184 @@ const Main = () => {
               </TouchableOpacity>
 
               <TouchableOpacity
+                style={{ marginLeft: 8 }}
                 onPress={() => navigation.navigate("Notification")}
                 disabled={locationModal || locationAlert}
               >
                 <Feather name="bell" size={25} color="black" />
               </TouchableOpacity>
-            </View>
-          </View>
-          <View style={{ paddingHorizontal: 20 }}>
-            <View>
-              <Text style={styles.testText1}>로그인 테스트 화면입니다</Text>
-              <Text style={styles.testText2}>{user.Name}</Text>
-            </View>
-            <View style={styles.center}>
-              <TouchableOpacity
-                style={[
-                  styles.buttonStyle,
-                  {
-                    backgroundColor:
-                      locationModal || locationAlert
-                        ? "rgba(0, 0, 0, 0.05)"
-                        : "#F3A241",
-                  },
-                ]}
-                onPress={() => logout()}
-                disabled={locationModal || locationAlert}
-              >
-                <Text
-                  style={[
-                    styles.buttonText,
-                    {
-                      color:
-                        locationModal || locationAlert
-                          ? "rgba(0, 0, 0, 0.05)"
-                          : "#ffffff",
-                    },
-                  ]}
-                >
-                  로그아웃
-                </Text>
+              <TouchableOpacity onPress={() => logout()}>
+                <MaterialIcons
+                  style={{ marginLeft: 20 }}
+                  name="logout"
+                  size={24}
+                  color="black"
+                />
               </TouchableOpacity>
             </View>
           </View>
+          <ScrollView contentContainerStyle={{ paddingBottom: 100 }}>
+            <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
+              <View>
+                <Text style={styles.mainTitle}>오늘의 날씨</Text>
+                <Text style={styles.subTitle}>
+                  농구 하러 가기 전 날씨 확인은 필수!
+                </Text>
+              </View>
+              {weatherInfo && (
+                <>
+                  <View
+                    style={[
+                      styles.weatherInfo,
+                      {
+                        backgroundColor:
+                          weatherInfo && weatherInfo.sunny === "sunny"
+                            ? "#80aeea"
+                            : "#4e5164",
+                      },
+                    ]}
+                  >
+                    <View style={styles.weatherInfoFisrtLine}>
+                      <View style={styles.weatherImageWrapper}>
+                        <Image
+                          style={styles.weatherImage}
+                          source={
+                            weatherInfo.sunny === "sunny" ? sunny : cloudy
+                          }
+                          resizeMode="contain"
+                        />
+                      </View>
+                      <Text style={styles.temperature}>
+                        {weatherInfo.temperature} °
+                      </Text>
+                    </View>
+                    <View style={styles.weatherInfoSecondLine}>
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <View style={styles.rowView}>
+                          <FontAwesome5 name="wind" size={16} color="white" />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: "#ffffff",
+                              marginLeft: 5,
+                            }}
+                          >
+                            풍속 {weatherInfo.windSpeed}
+                          </Text>
+                        </View>
+                        <View style={styles.rowView}>
+                          <MaterialCommunityIcons
+                            name="weather-rainy"
+                            size={16}
+                            color="white"
+                          />
+                          <Text
+                            style={{
+                              fontSize: 16,
+                              color: "#ffffff",
+                              marginLeft: 5,
+                            }}
+                          >
+                            강수 확률 : {weatherInfo.precipitationPercentage}%
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                    <View style={styles.weatherComment}>
+                      <Text style={styles.weatherInfoFourthLine}>
+                        {weatherInfo.sunny === "sunny" ? (
+                          "좋은 날씨에요! 농구 한 판 어떠세요?"
+                        ) : (
+                          <View
+                            style={{
+                              justifyContent: "center",
+                              alignItems: "center",
+                              textAlign: "center",
+                            }}
+                          >
+                            <Text style={{ color: "#ffffff" }}>
+                              구름이 많은 날이네요.
+                            </Text>
+                            <Text style={{ color: "#ffffff" }}>
+                              실내 농구로 기분 전환 어떠세요?
+                            </Text>
+                          </View>
+                        )}
+                      </Text>
+                    </View>
+                  </View>
+                </>
+              )}
+            </View>
+            <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
+              <Text style={styles.mainTitle}>마감임박</Text>
+              <Text style={styles.subTitle}>시작이 얼마 남지 않았어요!</Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                paddingHorizontal: 20,
+                justifyContent: "space-between",
+              }}
+            >
+              {deadLineList &&
+                deadLineList.map((deadline, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() =>
+                      navigation.navigate("MatchDetail", {
+                        postingId: deadline.Posting_id,
+                      })
+                    }
+                  >
+                    <View style={styles.deadlineItem}>
+                      <View style={styles.imageContainer}>
+                        <Image
+                          resizeMode="cover"
+                          source={
+                            deadline.Image
+                              ? {
+                                  uri: `${REACT_APP_PROXY}image/match/${deadline.Image}`,
+                                }
+                              : HoopSquadFullLogo
+                          }
+                          style={styles.imageStyle}
+                        />
+                      </View>
+                    </View>
+                    <Text
+                      style={{ fontSize: 12, color: "#878787", paddingTop: 6 }}
+                    >
+                      {formattedTime(deadline.PlayTime)}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+            </View>
+            <View style={{ paddingHorizontal: 20, paddingTop: 20 }}>
+              <Text style={styles.mainTitle}>대회정보</Text>
+              <Text style={styles.subTitle}>갈고 닦은 실력을 보여주세요!</Text>
+            </View>
 
+            <TouchableOpacity
+              style={{ height: 100, paddingHorizontal: 20 }}
+              onPress={() => {
+                Linking.openURL(
+                  "https://www.koreabasketball.or.kr/game/dom_schedule.php"
+                );
+              }}
+            >
+              <Image
+                resizeMode="cover"
+                source={compete}
+                style={styles.competeImageStyle}
+              />
+            </TouchableOpacity>
+          </ScrollView>
           <NavigationBar
             opacity={locationModal || locationAlert}
             touchable={locationModal || locationAlert}
@@ -428,6 +616,97 @@ const styles = StyleSheet.create({
   deleteModalDeleteText: {
     textAlign: "center",
     fontSize: 13,
+  },
+  weatherInfo: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    justifyContent: "center",
+    borderRadius: 12,
+    backgroundColor: "#80aeea",
+  },
+  weatherImageWrapper: {
+    width: 100,
+    height: 100,
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 26,
+  },
+  weatherImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  mainTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingBottom: 5,
+  },
+  subTitle: {
+    fontSize: 14,
+    color: "#8F8F8F",
+    paddingBottom: 10,
+  },
+  temperature: {
+    fontSize: 60,
+    color: "#ffffff",
+  },
+  weatherInfoFisrtLine: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  weatherInfoSecondLine: {
+    fontSize: 20,
+    color: "#ffffff",
+    textAlign: "center",
+    textAlignVertical: "center",
+  },
+  weatherInfoFourthLine: {
+    fontSize: 14,
+    color: "#ffffff",
+    textAlign: "center",
+    textAlignVertical: "center",
+    marginTop: 4,
+  },
+  rowView: {
+    flexDirection: "row",
+    alignItems: "center",
+    textAlign: "center",
+    textAlignVertical: "center",
+    paddingHorizontal: 4,
+  },
+  weatherComment: {
+    backgroundColor: "rgba(205, 205, 205, 0.4)",
+    marginVertical: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  deadlineItem: {
+    width: 110,
+    height: 110,
+    justifyContent: "space-between",
+    alignItems: "center",
+    borderWidth: 1,
+    borderRadius: 8,
+    borderColor: "#E2E2E2",
+    overflow: "hidden",
+  },
+  imageContainer: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  imageStyle: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  competeImageStyle: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    borderRadius: 12,
   },
 });
 
